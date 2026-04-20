@@ -1,0 +1,13 @@
+export type { Ambito } from "./ambito";
+export type { Sector } from "./sector";
+export type { ItemListSolucion, Solucion, Problema, Faq, Beneficio, Caracteristica, CasosDeUso } from "./solucion";
+export type { ItemListPack, Pack } from "./pack";
+export type { Aplicacion } from "./aplicacion";
+export type { Consultoria } from "./consultoria";
+export type { Cliente } from "./cliente";
+export { LogoType } from "./cliente";
+export type { Testimonio, TestimonioConCliente } from "./testimonio";
+export type { Actualidad } from "./actualidad";
+export type { Evento } from "./evento";
+export type { HistoriaCliente } from "./historiaCliente";
+export type { Informe } from "./informe";
