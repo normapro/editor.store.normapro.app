@@ -11,5 +11,8 @@ export interface RecursoConfig<T> {
   plural: string;
   singular: string;
   columnaPrincipal: keyof T;
+  idFields?: Array<keyof T | string>;
+  extractList?: (payload: unknown) => T[];
+  getItemId?: (item: T, index: number) => number | string;
   esquema: CampoEsquema<T>[];
 }

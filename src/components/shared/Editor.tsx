@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { RecursoConfig } from '../types/editor';
+import type { RecursoConfig } from '../../types/editor';
 
 interface Props<T> {
   config: RecursoConfig<T>;
