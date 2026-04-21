@@ -19,11 +19,6 @@
   --color-danger: #ef4444;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -31,6 +26,17 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-theme='dark'] {
+  --color-surface: #111827;
+  --color-surface-alt: #0b1220;
+  --color-surface-hover: #1f2937;
+  --color-border: #334155;
+  --color-border-dark: #475569;
+  --color-text-primary: #f3f4f6;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
 }
 
 ::-webkit-scrollbar {
@@ -46,4 +52,37 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+.ice-bubble {
+  position: absolute;
+  bottom: -22vh;
+  animation-name: ice-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+  filter: blur(0.2px);
+}
+
+@keyframes ice-rise {
+  0% {
+    transform: translate3d(0, 20vh, 0) scale(0.82);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.35;
+  }
+  35% {
+    transform: translate3d(12px, -20vh, 0) scale(0.94);
+  }
+  60% {
+    transform: translate3d(-10px, -58vh, 0) scale(1);
+  }
+  85% {
+    opacity: 0.33;
+  }
+  100% {
+    transform: translate3d(8px, -126vh, 0) scale(1.08);
+    opacity: 0;
+  }
 }

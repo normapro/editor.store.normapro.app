@@ -11,12 +11,10 @@ function App() {
     <Routes>
       <Route path="/" element={<WelcomePage />} />
       <Route path="/inicio-sesion" element={<InicioSesionPage />} />
-
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/actualidad" element={<ActualidadPage />} />
       </Route>
-
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

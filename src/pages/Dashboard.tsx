@@ -29,7 +29,7 @@ const secondaryModules = [
 export default function Dashboard() {
   return (
     <>
-      <Header title="Dashboard" subtitle="Panel de administración de NormaPro Store" />
+      <Header title="Inicio" subtitle="Panel principal de administración de NormaPro Store" />
       <div className="p-8 md:p-10">
         {/* Welcome card */}
         <div className="bg-gradient-to-r from-primary to-primary-light rounded-2xl p-8 mb-8 text-white shadow-[0_24px_60px_rgba(0,178,227,0.25)]">
@@ -37,8 +37,10 @@ export default function Dashboard() {
             Bienvenido al Editor de Store
           </h2>
           <p className="text-white/70 text-[15px] max-w-xl">
-            Gestiona las tablas de la base de datos de NormaPro Store. Selecciona
-            una entidad del menú lateral o de las tarjetas de abajo para empezar.
+            Gestiona las tablas de la base de datos de NormaPro Store. 
+          </p>
+          <p className="text-white/70 text-[15px] max-w-xl">
+            Selecciona una entidad del  menu lateral o de abajo para modificarla.
           </p>
         </div>
 

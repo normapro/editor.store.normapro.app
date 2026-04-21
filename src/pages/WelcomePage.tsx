@@ -1,12 +1,35 @@
 import { Link } from "react-router-dom";
 
 export default function WelcomePage() {
+  const iceBubbles = [
+    { src: "/ice1.png", left: "6%", size: "30rem", duration: "22s", delay: "-3s"  },
+    { src: "/ice2.png", left: "16%", size: "25rem", duration: "18s", delay: "-9s" },
+    { src: "/ice3.png", left: "28%", size: "20rem", duration: "24s", delay: "-13s" },
+    { src: "/ice1.png", left: "41%", size: "15rem", duration: "20s", delay: "-6s" },
+    { src: "/ice2.png", left: "54%", size: "22rem", duration: "27s", delay: "-16s" },
+    { src: "/ice3.png", left: "66%", size: "18rem", duration: "19s", delay: "-11s"  }
+
+  ];
+
   return (
     <main className="min-h-screen bg-white text-[#010D3D] relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-32 -left-20 h-80 w-80 rounded-full bg-[#00B2E3]/25 blur-3xl" />
-        <div className="absolute -bottom-28 -right-16 h-[26rem] w-[26rem] rounded-full bg-[#64D8CC]/30 blur-3xl" />
-        <div className="absolute inset-x-0 top-[26%] h-px bg-gradient-to-r from-transparent via-[#00B2E3]/25 to-transparent" />
+        {iceBubbles.map((item, index) => (
+          <img
+            key={`${item.src}-${index}`}
+            src={item.src}
+            alt=""
+            aria-hidden="true"
+            className="ice-bubble object-contain"
+            style={{
+              left: item.left,
+              width: item.size,
+              height: item.size,
+              animationDuration: item.duration,
+              animationDelay: item.delay
+            }}
+          />
+        ))}
       </div>
 
       <section className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
@@ -23,10 +46,6 @@ export default function WelcomePage() {
 
           <p className="text-lg md:text-2xl font-semibold text-[#010D3D]/90 mb-10">
             Editor de la página NormaPro
-          </p>
-
-          <p className="text-sm md:text-base text-[#010D3D]/70 mb-9 max-w-2xl mx-auto leading-relaxed">
-            Un saludo. Desde aquí podrás comenzar a gestionar contenidos y tablas.
           </p>
 
           <Link
