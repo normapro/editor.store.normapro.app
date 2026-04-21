@@ -5,19 +5,21 @@ import {
   MessageSquareQuote,
   Lightbulb,
   Package,
+  Briefcase,
   FileText,
   Newspaper,
   Calendar,
 } from "lucide-react";
 
 const navItems = [
-  { label: "Aplicaciones", icon: AppWindow },
-  { label: "Historias", icon: BookOpen },
-  { label: "Testimonios", icon: MessageSquareQuote },
-  { label: "Soluciones", icon: Lightbulb },
-  { label: "Packs", icon: Package },
-  { label: "Informes", icon: FileText },
-  { label: "Eventos", icon: Calendar },
+  { label: "Aplicaciones", icon: AppWindow, to: "/aplicaciones" },
+  { label: "Historias", icon: BookOpen, to: "/historias" },
+  { label: "Testimonios", icon: MessageSquareQuote, to: "/testimonios" },
+  { label: "Soluciones", icon: Lightbulb, to: "/soluciones" },
+  { label: "Packs", icon: Package, to: "/packs" },
+  { label: "Informes", icon: FileText, to: "/informes" },
+  { label: "Eventos", icon: Calendar, to: "/eventos" },
+  { label: "Consultorias", icon: Briefcase, to: "/consultorias" },
 ];
 
 export default function Sidebar() {
@@ -50,14 +52,20 @@ export default function Sidebar() {
         </NavLink>
 
         {navItems.map((item) => (
-          <button
+          <NavLink
             key={item.label}
-            type="button"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium text-white/70 hover:text-white hover:bg-white/8 transition-colors cursor-pointer mb-0.5"
+            to={item.to}
+            className={({ isActive }) =>
+              `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-colors mb-0.5 ${
+                isActive
+                  ? "bg-accent text-white"
+                  : "text-white/70 hover:text-white hover:bg-white/8"
+              }`
+            }
           >
             <item.icon size={20} className="shrink-0" />
             <span className="whitespace-nowrap">{item.label}</span>
-          </button>
+          </NavLink>
         ))}
       </nav>
     </aside>

@@ -9,21 +9,22 @@ import {
   Lightbulb,
   Package,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Header from "../components/layout/Header";
 
 const mainModules = [
-  { label: "Actualidad", icon: Newspaper, color: "bg-orange-500" },
-  { label: "Eventos", icon: Calendar, color: "bg-teal-500" },
-  { label: "Historias", icon: BookOpen, color: "bg-lime-600" },
-  { label: "Informes", icon: FileText, color: "bg-sky-500" },
-  { label: "Testimonios", icon: MessageSquareQuote, color: "bg-pink-500" },
-  { label: "Aplicaciones", icon: AppWindow, color: "bg-cyan-500" },
-  { label: "Consultorías", icon: Briefcase, color: "bg-indigo-500" },
+  { label: "Actualidad", icon: Newspaper, color: "bg-orange-500", to: "/actualidad" },
+  { label: "Eventos", icon: Calendar, color: "bg-teal-500", to: "/eventos" },
+  { label: "Historias", icon: BookOpen, color: "bg-lime-600", to: "/historias" },
+  { label: "Informes", icon: FileText, color: "bg-sky-500", to: "/informes" },
+  { label: "Testimonios", icon: MessageSquareQuote, color: "bg-pink-500", to: "/testimonios" },
+  { label: "Aplicaciones", icon: AppWindow, color: "bg-cyan-500", to: "/aplicaciones" },
+  { label: "Consultorias", icon: Briefcase, color: "bg-indigo-500", to: "/consultorias" },
 ];
 
 const secondaryModules = [
-  { label: "Soluciones", icon: Lightbulb, color: "bg-amber-500" },
-  { label: "Packs", icon: Package, color: "bg-emerald-500" },
+  { label: "Soluciones", icon: Lightbulb, color: "bg-amber-500", to: "/soluciones" },
+  { label: "Packs", icon: Package, color: "bg-emerald-500", to: "/packs" },
 ];
 
 export default function Dashboard() {
@@ -50,8 +51,9 @@ export default function Dashboard() {
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {mainModules.map((item) => (
-            <div
+            <Link
               key={item.label}
+              to={item.to}
               className="bg-surface rounded-xl border border-border p-5 hover:border-accent/40 hover:shadow-md transition-all group"
             >
               <div
@@ -65,7 +67,7 @@ export default function Dashboard() {
               <p className="text-[13px] text-text-muted mt-1">
                 Gestionar registros
               </p>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -74,8 +76,9 @@ export default function Dashboard() {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
           {secondaryModules.map((item) => (
-            <div
+            <Link
               key={item.label}
+              to={item.to}
               className="bg-surface rounded-xl border border-border p-5 hover:border-accent/40 hover:shadow-md transition-all group"
             >
               <div
@@ -87,9 +90,9 @@ export default function Dashboard() {
                 {item.label}
               </h4>
               <p className="text-[13px] text-text-muted mt-1">
-                Disponible en el siguiente bloque de desarrollo
+                Gestionar Registro
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
