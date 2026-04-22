@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CampoEsquema } from '../../types/editor';
 import { ParagraphsEditor } from '../campos/ParagraphsEditor';
+import { Multiselect } from '../campos/Multiselect';
 
 interface EditorProps<T extends object> {
   endpoint: string;
@@ -96,6 +97,12 @@ export function Editor<T extends object>({ endpoint, fields, idEdicion, onCerrar
                 </option>
               ))}
             </select>
+          ) : campo.type === 'multiselect' ? (
+            <Multiselect
+              value={formData[campo.name] as string | string[]}
+              options={campo.options ?? []}
+              onChange={(newValue) => setFormData({ ...formData, [campo.name]: newValue})}
+            />
           ) : campo.type === 'paragraphs' ? (
             <ParagraphsEditor
               value={Array.isArray(formData[campo.name]) ? (formData[campo.name] as string[]) : []}

@@ -1,8 +1,8 @@
 export interface CampoEsquema<T> {
   name: keyof T;
   label: string;
-  type: 'text' | 'textarea' | 'date' | 'number' | 'select' | 'paragraphs';
-  options?: string[]; // Solo para selects
+  type: "text" | "textarea" | "number" | "date" | "select" | "multiselect" | "paragraphs";
+  options?: string[]; // Solo para selects y multiselects
 }
 
 export interface RecursoConfig<T> {

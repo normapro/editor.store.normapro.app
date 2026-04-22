@@ -10,7 +10,7 @@ const ACTUALIDAD_FIELDS: CampoEsquema<Actualidad>[] = [
   { name: "title", label: "Titulo", type: "text" },
   { name: "slug", label: "Slug", type: "text" },
   { name: "fecha", label: "Fecha", type: "date" },
-  { name: "categoria", label: "Categoria", type: "text" },
+  { name: "categoria", label: "Categoria", type: "multiselect", options: ["Destacadas", "Tecnología", "Salud", 'Mediambiente', 'Digitalizacion', 'Formación', 'Industria', 'Seguridad alimentaria'] },
   { name: "id_pack", label: "Id pack", type: "number" },
   { name: "id_soluciones", label: "Id soluciones", type: "text" },
   { name: "imagen", label: "Imagen", type: "text" },
