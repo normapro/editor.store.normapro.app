@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 interface ListaRecursoProps<T extends object> {
   endpoint: string;
   titleField: keyof T;
+  onAdd?: () => void;
+  onEdit?: (id: number | string) => void;
+  reloadKey?: number;
 }
 
 // Normaliza la respuesta del backend a un array de objetos.
@@ -34,7 +37,13 @@ function resolveItemId<T extends object>(item: T, index: number): number | strin
   return index;
 }
 
-export function ListaRecurso<T extends object>({ endpoint, titleField }: ListaRecursoProps<T>) {
+export function ListaRecurso<T extends object>({
+  endpoint,
+  titleField,
+  onAdd,
+  onEdit,
+  reloadKey,
+}: ListaRecursoProps<T>) {
   // items: filas recibidas desde la API.
   // hasError: controla si se debe mostrar el mensaje rojo generico.
   const [items, setItems] = useState<T[]>([]);
@@ -69,13 +78,23 @@ export function ListaRecurso<T extends object>({ endpoint, titleField }: ListaRe
     return () => {
       cancelled = true;
     };
-  }, [endpoint]);
+  }, [endpoint, reloadKey]);
 
   // Mensaje unico de error, sin detalles tecnicos.
   if (hasError) return <div className="text-danger">Error al cargar la lista.</div>;
 
   return (
     <div className="w-full">
+      <div className="mb-4 flex justify-end mr-2 w-full">
+        <button
+          type="button"
+          onClick={onAdd}
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-primary/10 w-[20%] h-10"
+        >
+          Añadir +
+        </button>
+      </div>
+
       <div className="overflow-x-auto rounded-xl border border-border bg-surface">
         <table className="min-w-full bg-surface">
           <thead className="border-b border-border bg-surface-alt">
@@ -83,6 +102,7 @@ export function ListaRecurso<T extends object>({ endpoint, titleField }: ListaRe
               {/* Estructura fija solicitada: solo ID y Title. */}
               <th className="px-6 py-3 text-left text-xs font-medium uppercase text-text-muted">ID</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase text-text-muted">Title</th>
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase text-text-muted">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -94,6 +114,23 @@ export function ListaRecurso<T extends object>({ endpoint, titleField }: ListaRe
                 <tr key={id} className="hover:bg-surface-hover">
                   <td className="px-6 py-4 text-sm text-text-muted">{id}</td>
                   <td className="px-6 py-4 text-sm text-text-primary">{String(item[titleField] ?? '')}</td>
+                  <td className="px-6 py-4 text-right text-sm">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onEdit?.(id)}
+                        className="rounded-md border border-border px-3 py-1.5 text-text-secondary hover:bg-primary/10"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded-md border border-border px-3 py-1.5 text-danger hover:bg-danger/10"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
