@@ -4,4 +4,5 @@ export interface Consultoria {
   uriIcon: string;
   shortDescription: string;
   slug: string;
+  contenidos: string;
 }
