@@ -14,7 +14,7 @@ const ACTUALIDAD_FIELDS: CampoEsquema<Actualidad>[] = [
   { name: "id_pack", label: "Id pack", type: "number" },
   { name: "id_soluciones", label: "Id soluciones", type: "text" },
   { name: "imagen", label: "Imagen", type: "text" },
-  { name: "content", label: "Contenido", type: "textarea" },
+  { name: "content", label: "Contenido", type: "paragraphs" },
 ];
 
 export default function ActualidadPage() {

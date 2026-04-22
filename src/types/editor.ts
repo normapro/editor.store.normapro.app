@@ -1,7 +1,7 @@
 export interface CampoEsquema<T> {
   name: keyof T;
   label: string;
-  type: 'text' | 'textarea' | 'date' | 'number' | 'select';
+  type: 'text' | 'textarea' | 'date' | 'number' | 'select' | 'paragraphs';
   options?: string[]; // Solo para selects
 }
 
