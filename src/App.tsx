@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
+import RequireEditorAuth from "./components/auth/RequireEditorAuth";
 import WelcomePage from "./pages/WelcomePage";
 import InicioSesionPage from "./pages/InicioSesionPage";
 import Dashboard from "./pages/Dashboard";
@@ -19,17 +20,19 @@ function App() {
     <Routes>
       <Route path="/" element={<WelcomePage />} />
       <Route path="/inicio-sesion" element={<InicioSesionPage />} />
-      <Route element={<Layout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/actualidad" element={<ActualidadPage />} />
-        <Route path="/aplicaciones" element={<AplicacionesPage />} />
-        <Route path="/consultorias" element={<ConsultoriasPage />} />
-        <Route path="/eventos" element={<EventosPage />} />
-        <Route path="/historias" element={<HistoriasPage />} />
-        <Route path="/informes" element={<InformesPage />} />
-        <Route path="/packs" element={<PacksPage />} />
-        <Route path="/soluciones" element={<SolucionesPage />} />
-        <Route path="/testimonios" element={<TestimoniosPage />} />
+      <Route element={<RequireEditorAuth />}>
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/actualidad" element={<ActualidadPage />} />
+          <Route path="/aplicaciones" element={<AplicacionesPage />} />
+          <Route path="/consultorias" element={<ConsultoriasPage />} />
+          <Route path="/eventos" element={<EventosPage />} />
+          <Route path="/historias" element={<HistoriasPage />} />
+          <Route path="/informes" element={<InformesPage />} />
+          <Route path="/packs" element={<PacksPage />} />
+          <Route path="/soluciones" element={<SolucionesPage />} />
+          <Route path="/testimonios" element={<TestimoniosPage />} />
+        </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

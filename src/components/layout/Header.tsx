@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Bell, LogOut, UserRound, Moon, Sun } from "lucide-react";
+import { clearEditorToken } from "../../auth/session";
 
 interface HeaderProps {
   title: string;
@@ -17,7 +18,8 @@ export default function Header({ title, subtitle }: HeaderProps) {
 
   const handleLogout = () => {
     setIsUserMenuOpen(false);
-    navigate("/");
+    clearEditorToken();
+    navigate("/inicio-sesion");
   };
 
   useEffect(() => {
