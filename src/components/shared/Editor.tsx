@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import type { CampoEsquema } from '../../types/editor';
+import { getEditorToken } from '../../auth/session';
 import { ParagraphsEditor } from '../campos/ParagraphsEditor';
 import { Multiselect } from '../campos/Multiselect';
 
 interface EditorProps<T extends object> {
   endpoint: string;
+  saveEndpoint?: string;
   fields: CampoEsquema<T>[];
   idEdicion: number | string | null;
   onCerrar: () => void;
   onGuardado?: () => void;
 }
 
-export function Editor<T extends object>({ endpoint, fields, idEdicion, onCerrar, onGuardado }: EditorProps<T>) {
+export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdicion, onCerrar, onGuardado }: EditorProps<T>) {
   const [formData, setFormData] = useState<Partial<T>>({});
   const [hasError, setHasError] = useState(false);
 
@@ -49,12 +51,19 @@ export function Editor<T extends object>({ endpoint, fields, idEdicion, onCerrar
     setHasError(false);
 
     const metodo = idEdicion !== null ? 'PUT' : 'POST';
-    const url = idEdicion !== null ? `${endpoint}/${idEdicion}` : endpoint;
+    const writeBase = saveEndpoint ?? endpoint;
+    const url = idEdicion !== null ? `${writeBase}/${idEdicion}` : writeBase;
+    const token = getEditorToken();
+
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
     try {
       const res = await fetch(url, {
         method: metodo,
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(formData),
       });
 

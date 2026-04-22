@@ -3,6 +3,7 @@ import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import { Editor } from "../../components/shared/Editor";
 import API_ENDPOINTS from "../../config/api";
+import { getEditorToken } from "../../auth/session";
 import type { Actualidad } from "../../types/actualidad";
 import type { CampoEsquema } from "../../types/editor";
 
@@ -40,6 +41,34 @@ export default function ActualidadPage() {
     setReloadKey((prev) => prev + 1);
   };
 
+  const onDelete = async (id: number | string) => {
+    const confirmar = window.confirm("Vas a eliminar esta noticia. Esta accion no se puede deshacer. ¿Continuar?");
+    if (!confirmar) {
+      return;
+    }
+
+    const token = getEditorToken();
+    const headers: HeadersInit = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await fetch(`${API_ENDPOINTS.ACTUALIDAD_EDITOR}/${id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!res.ok) {
+        throw new Error("delete_failed");
+      }
+
+      setReloadKey((prev) => prev + 1);
+    } catch {
+      window.alert("No se pudo eliminar la noticia.");
+    }
+  };
+
   return (
     <>
       <Header 
@@ -55,11 +84,13 @@ export default function ActualidadPage() {
               titleField="title"
               onAdd={abrirCrear}
               onEdit={abrirEditar}
+              onDelete={onDelete}
               reloadKey={reloadKey}
             />
           ) : (
             <Editor<Actualidad>
               endpoint={API_ENDPOINTS.ACTUALIDAD}
+              saveEndpoint={API_ENDPOINTS.ACTUALIDAD_EDITOR}
               fields={ACTUALIDAD_FIELDS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}

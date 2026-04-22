@@ -6,6 +6,7 @@ interface ListaRecursoProps<T extends object> {
   titleField: keyof T;
   onAdd?: () => void;
   onEdit?: (id: number | string) => void;
+  onDelete?: (id: number | string) => void;
   reloadKey?: number;
 }
 
@@ -42,6 +43,7 @@ export function ListaRecurso<T extends object>({
   titleField,
   onAdd,
   onEdit,
+  onDelete,
   reloadKey,
 }: ListaRecursoProps<T>) {
   // items: filas recibidas desde la API.
@@ -125,6 +127,8 @@ export function ListaRecurso<T extends object>({
                       </button>
                       <button
                         type="button"
+                        onClick={() => onDelete?.(id)}
+                        disabled={!onDelete}
                         className="rounded-md border border-border px-3 py-1.5 text-danger hover:bg-danger/10"
                       >
                         Eliminar
