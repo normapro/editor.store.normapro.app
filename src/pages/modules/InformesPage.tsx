@@ -14,7 +14,7 @@ const INFORME_FIELDS: CampoEsquema<Informe>[] = [
   { name: "textoDescarga", label: "Texto descarga", type: "text" },
   { name: "img_portada", label: "Imagen portada", type: "text" },
   { name: "img_informe", label: "Imagen informe", type: "text" },
-  { name: "prologo", label: "Texto", type: "textarea" },
+  { name: "prologo", label: "Contenido del informe", type: "contenido_informe" },
   { name: "indice", label: "Indice", type: "textarea" },
   { name: "responsables", label: "Autores", type: "textarea" },
 ];

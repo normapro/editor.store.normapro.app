@@ -3,6 +3,7 @@ import type { CampoEsquema } from '../../types/editor';
 import { getEditorToken } from '../../auth/session';
 import { ParagraphsEditor } from '../campos/ParagraphsEditor';
 import { Multiselect } from '../campos/Multiselect';
+import { ContenidoInforme } from '../campos/ContenidoInforme';
 
 interface EditorProps<T extends object> {
   endpoint: string;
@@ -116,6 +117,11 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
             <ParagraphsEditor
               value={Array.isArray(formData[campo.name]) ? (formData[campo.name] as string[]) : []}
               onChange={(e) => setFormData({...formData, [campo.name]: e as any})}
+            />
+          ) : campo.type === 'contenido_informe' ? (
+            <ContenidoInforme
+              value={formData[campo.name]}
+              onChange={(newValue) => setFormData({ ...formData, [campo.name]: newValue })}
             />
           ) : (
             <input
