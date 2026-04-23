@@ -47,6 +47,18 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
     }));
   };
 
+  const cleanContenidoInforme = (data: any) => {
+    if (!Array.isArray(data)) return data;
+
+    return data.map((item) => ({
+      ...item,
+      content: item.content
+        ?.replace(/&nbsp;/g, ' ')
+        .replace(/\u00A0/g, ' ')
+        .replace(/\s+/g, ' ')
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setHasError(false);
@@ -61,11 +73,19 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       headers.Authorization = `Bearer ${token}`;
     }
 
+    // Limpiar el contenido del informe antes de enviarlo
+    const cleanedFormData = { ...formData } as any;
+
+    if (cleanedFormData["prologo"]) {
+      cleanedFormData["prologo"] = cleanContenidoInforme(cleanedFormData["prologo"]);
+    }
+
+    // Enviar la solicitud al backend
     try {
       const res = await fetch(url, {
         method: metodo,
         headers,
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanedFormData),
       });
 
       if (!res.ok) {
@@ -87,8 +107,8 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
 
       {fields.map((campo) => {
         const valorActual = formData[campo.name];
-        const safeString = (typeof valorActual === 'string' || typeof valorActual === 'number') 
-          ? String(valorActual) 
+        const safeString = (typeof valorActual === 'string' || typeof valorActual === 'number')
+          ? String(valorActual)
           : '';
 
         return (
