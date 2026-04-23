@@ -25,7 +25,7 @@ export const Multiselect: React.FC<Props> = ({ value, options, onChange }) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 p-3 border rounded-lg bg-gray-50">
+    <div className="flex flex-wrap gap-2 p-3 border border-border rounded-lg">
       {options.map((option) => {
         const isSelected = selectedItems.includes(option);
         return (
@@ -33,10 +33,10 @@ export const Multiselect: React.FC<Props> = ({ value, options, onChange }) => {
             key={option}
             type="button"
             onClick={() => toggleOption(option)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors border ${
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors border border-border ${
               isSelected
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                ? 'bg-blue-600 text-white'
+                : 'hover:bg-blue-400'
             }`}
           >
             {isSelected ? '✓ ' : '+ '}

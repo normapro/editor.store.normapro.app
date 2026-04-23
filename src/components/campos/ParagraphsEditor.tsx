@@ -22,11 +22,11 @@ export const ParagraphsEditor: React.FC<Props> = ({ value = [], onChange }) => {
   };
 
   return (
-    <div className="space-y-3 p-3 border rounded-lg bg-gray-50">
+    <div className="space-y-3 p-3 border border-border rounded-lg">
       {value.map((parrafo, index) => (
         <div key={index} className="flex gap-2 items-start">
           <textarea
-            className="flex-1 p-2 border rounded shadow-sm text-sm"
+            className="flex-1 p-2 border border-border rounded shadow-sm text-sm"
             rows={3}
             value={parrafo}
             onChange={(e) => updateParagraph(index, e.target.value)}
@@ -44,7 +44,7 @@ export const ParagraphsEditor: React.FC<Props> = ({ value = [], onChange }) => {
       <button
         type="button"
         onClick={addParagraph}
-        className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded border border-blue-200 hover:bg-blue-100"
+        className="text-xs text-blue-600 px-3 py-1 rounded border border-blue-200 hover:bg-blue-100"
       >
         + Añadir otro párrafo
       </button>
