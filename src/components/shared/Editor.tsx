@@ -40,7 +40,7 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       });
   }, [endpoint, idEdicion]);
 
-  const handleChange = (field: keyof T, value: string) => {
+  const handleChange = (field: keyof T, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value as unknown as T[keyof T],
@@ -85,54 +85,59 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
 
       {hasError && <div className="text-danger">Error al guardar.</div>}
 
-      {fields.map((campo) => (
-        <div key={String(campo.name)} className="flex flex-col">
-          <label className="text-sm font-bold text-text-secondary">{campo.label}</label>
-          {campo.type === 'textarea' ? (
-            <textarea
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-text-primary"
-              value={String(formData[campo.name] ?? '')}
-              onChange={(e) => handleChange(campo.name, e.target.value)}
-            />
-          ) : campo.type === 'select' ? (
-            <select
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-text-primary"
-              value={String(formData[campo.name] ?? '')}
-              onChange={(e) => handleChange(campo.name, e.target.value)}
-            >
-              <option value="">Selecciona una opcion</option>
-              {(campo.options ?? []).map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          ) : campo.type === 'multiselect' ? (
-            <Multiselect
-              value={formData[campo.name] as string | string[]}
-              options={campo.options ?? []}
-              onChange={(newValue) => setFormData({ ...formData, [campo.name]: newValue})}
-            />
-          ) : campo.type === 'paragraphs' ? (
-            <ParagraphsEditor
-              value={Array.isArray(formData[campo.name]) ? (formData[campo.name] as string[]) : []}
-              onChange={(e) => setFormData({...formData, [campo.name]: e as any})}
-            />
-          ) : campo.type === 'contenido_informe' ? (
-            <ContenidoInforme
-              value={formData[campo.name]}
-              onChange={(newValue) => setFormData({ ...formData, [campo.name]: newValue })}
-            />
-          ) : (
-            <input
-              type={campo.type}
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-text-primary"
-              value={String(formData[campo.name] ?? '')}
-              onChange={(e) => handleChange(campo.name, e.target.value)}
-            />
-          )}
-        </div>
-      ))}
+      {fields.map((campo) => {
+        const valorActual = formData[campo.name];
+        const safeString = (typeof valorActual === 'string' || typeof valorActual === 'number') 
+          ? String(valorActual) 
+          : '';
+
+        return (
+          <div key={String(campo.name)} className="flex flex-col gap-1">
+            <label className="text-sm font-bold text-text-secondary">{campo.label}</label>
+            {campo.type === 'textarea' ? (
+              <textarea
+                className="rounded-lg border border-border bg-surface px-3 py-2 text-text-primary"
+                value={safeString}
+                onChange={(e) => handleChange(campo.name, e.target.value)}
+              />
+            ) : campo.type === 'select' ? (
+              <select
+                className="rounded-lg border border-border bg-surface px-3 py-2 text-text-primary"
+                value={safeString}
+                onChange={(e) => handleChange(campo.name, e.target.value)}
+              >
+                <option value="">Selecciona una opcion</option>
+                {(campo.options ?? []).map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            ) : campo.type === 'multiselect' ? (
+              <Multiselect
+                value={valorActual as string | string[]}
+                options={campo.options ?? []}
+                onChange={(newValue) => handleChange(campo.name, newValue)}
+              />
+            ) : campo.type === 'paragraphs' ? (
+              <ParagraphsEditor
+                value={Array.isArray(valorActual) ? (valorActual as string[]) : []}
+                onChange={(newValue) => handleChange(campo.name, newValue)}
+              />
+            ) : campo.type === 'contenido_informe' ? (
+              <ContenidoInforme
+                value={valorActual}
+                onChange={(newValue) => handleChange(campo.name, newValue)}
+              />
+            ) : (
+              <input
+                type={campo.type}
+                className="rounded-lg border border-border bg-surface px-3 py-2 text-text-primary"
+                value={safeString}
+                onChange={(e) => handleChange(campo.name, e.target.value)}
+              />
+            )}
+          </div>
+        );
+      })}
 
       <div className="flex gap-2">
         <button type="submit" className="rounded-lg bg-accent px-4 py-2 text-white hover:opacity-90">Guardar</button>
