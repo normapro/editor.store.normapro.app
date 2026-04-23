@@ -20,6 +20,8 @@ const API_ENDPOINTS = {
   PACKS: `${API_BASE_URL}/v1/store/packs`,
   COOKIES: `${API_BASE_URL}/v1/store/cookies`,
   EVENTOS: `${API_BASE_URL}/v1/store/eventos`,
+  EVENTOS_EDITOR_READ: `${API_BASE_URL}/v1/store/eventos-editor`,
+  EVENTOS_EDITOR: `${API_BASE_URL}/v1/editor/store/eventos`,
   ACTUALIDAD: `${API_BASE_URL}/v1/store/actualidad`,
   ACTUALIDAD_EDITOR: `${API_BASE_URL}/v1/editor/store/actualidad`,
   INFORMES_EDITOR: `${API_BASE_URL}/v1/editor/store/informes`,

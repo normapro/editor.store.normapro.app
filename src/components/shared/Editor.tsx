@@ -4,6 +4,8 @@ import { getEditorToken } from '../../auth/session';
 import { ParagraphsEditor } from '../campos/ParagraphsEditor';
 import { Multiselect } from '../campos/Multiselect';
 import { ContenidoInforme } from '../campos/ContenidoInforme';
+import { IndiceInformeEditor } from '../campos/IndiceInformeEditor';
+import { AutoresInformeEditor } from '../campos/AutoresInformeEditor';
 
 interface EditorProps<T extends object> {
   endpoint: string;
@@ -45,6 +47,27 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       ...prev,
       [field]: value as unknown as T[keyof T],
     }));
+  };
+
+  const getFieldValue = (field: keyof T): unknown => {
+    const record = formData as Record<string, unknown>;
+    const key = String(field);
+
+    if (record[key] !== undefined) {
+      return record[key];
+    }
+
+    const snakeKey = key.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+    if (record[snakeKey] !== undefined) {
+      return record[snakeKey];
+    }
+
+    const camelKey = key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase());
+    if (record[camelKey] !== undefined) {
+      return record[camelKey];
+    }
+
+    return undefined;
   };
 
   const cleanContenidoInforme = (data: any) => {
@@ -106,10 +129,62 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       {hasError && <div className="text-danger">Error al guardar.</div>}
 
       {fields.map((campo) => {
-        const valorActual = formData[campo.name];
-        const safeString = (typeof valorActual === 'string' || typeof valorActual === 'number')
-          ? String(valorActual)
-          : '';
+        const valorActual = getFieldValue(campo.name);
+        const safeString = (() => {
+          if (valorActual === null || valorActual === undefined) {
+            return '';
+          }
+
+          if (campo.type === 'date') {
+            if (typeof valorActual === 'string') {
+              const trimmed = valorActual.trim();
+              const isoLike = trimmed.match(/^(\d{4}-\d{2}-\d{2})/);
+              if (isoLike) {
+                return isoLike[1];
+              }
+
+              const parsed = new Date(trimmed);
+              if (!Number.isNaN(parsed.getTime())) {
+                return parsed.toISOString().slice(0, 10);
+              }
+
+              return '';
+            }
+
+            if (valorActual instanceof Date && !Number.isNaN(valorActual.getTime())) {
+              return valorActual.toISOString().slice(0, 10);
+            }
+
+            return '';
+          }
+
+          if (typeof valorActual === 'string' || typeof valorActual === 'number') {
+            return String(valorActual);
+          }
+
+          if (Array.isArray(valorActual)) {
+            if (campo.type === 'textarea') {
+              try {
+                return JSON.stringify(valorActual, null, 2);
+              } catch {
+                return '';
+              }
+            }
+
+            return valorActual
+              .map((item) => String(item).trim())
+              .filter((item) => item.length > 0)
+              .join(',');
+          }
+
+          try {
+            return campo.type === 'textarea'
+              ? JSON.stringify(valorActual, null, 2)
+              : JSON.stringify(valorActual);
+          } catch {
+            return '';
+          }
+        })();
 
         return (
           <div key={String(campo.name)} className="flex flex-col gap-1">
@@ -144,6 +219,16 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
               />
             ) : campo.type === 'contenido_informe' ? (
               <ContenidoInforme
+                value={valorActual}
+                onChange={(newValue) => handleChange(campo.name, newValue)}
+              />
+            ) : campo.type === 'indice_informe' ? (
+              <IndiceInformeEditor
+                value={valorActual}
+                onChange={(newValue) => handleChange(campo.name, newValue)}
+              />
+            ) : campo.type === 'autores_informe' ? (
+              <AutoresInformeEditor
                 value={valorActual}
                 onChange={(newValue) => handleChange(campo.name, newValue)}
               />

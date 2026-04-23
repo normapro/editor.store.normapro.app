@@ -12,11 +12,11 @@ const INFORME_FIELDS: CampoEsquema<Informe>[] = [
   { name: "slug", label: "Slug", type: "text" },
   { name: "categoria", label: "Categoria", type: "text" },
   { name: "textoDescarga", label: "Texto descarga", type: "text" },
-  { name: "img_portada", label: "Imagen portada", type: "text" },
-  { name: "img_informe", label: "Imagen informe", type: "text" },
+  { name: "imgPortada", label: "Imagen portada", type: "text" },
+  { name: "imgInforme", label: "Imagen informe", type: "text" },
   { name: "prologo", label: "Contenido del informe", type: "contenido_informe" },
-  { name: "indice", label: "Indice", type: "textarea" },
-  { name: "responsables", label: "Autores", type: "textarea" },
+  { name: "indice", label: "Indice", type: "indice_informe" },
+  { name: "responsables", label: "Autores", type: "autores_informe" },
 ];
 
 export default function InformesPage() {
