@@ -22,6 +22,7 @@ const API_ENDPOINTS = {
   EVENTOS: `${API_BASE_URL}/v1/store/eventos`,
   ACTUALIDAD: `${API_BASE_URL}/v1/store/actualidad`,
   ACTUALIDAD_EDITOR: `${API_BASE_URL}/v1/editor/store/actualidad`,
+  INFORMES_EDITOR: `${API_BASE_URL}/v1/editor/store/informes`,
   EDITOR_LOGIN: `${API_BASE_URL}/v1/editor-auth/login`,
 };
 

@@ -5,6 +5,7 @@ import API_ENDPOINTS from "../../config/api";
 import type { Informe } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
+import { getEditorToken } from "../../auth/session";
 
 const INFORME_FIELDS: CampoEsquema<Informe>[] = [
   { name: "titulo", label: "Titulo", type: "text" },
@@ -41,6 +42,34 @@ export default function InformesPage() {
     setReloadKey((prev) => prev + 1);
   };
 
+  const onDelete = async (id: number | string) => {
+    const confirmar = window.confirm("Vas a eliminar este informe. Esta accion no se puede deshacer. ¿Continuar?");
+    if (!confirmar) {
+      return;
+    }
+
+    const token = getEditorToken();
+    const headers: HeadersInit = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await fetch(`${API_ENDPOINTS.INFORMES_EDITOR}/${id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!res.ok) {
+        throw new Error("delete_failed");
+      }
+
+      setReloadKey((prev) => prev + 1);
+    } catch {
+      window.alert("No se pudo eliminar el informe.");
+    }
+  };
+
   return (
     <>
       <Header 
@@ -56,11 +85,13 @@ export default function InformesPage() {
               titleField="titulo"
               onAdd={abrirCrear}
               onEdit={abrirEditar}
+              onDelete={onDelete}
               reloadKey={reloadKey}
             />
           ) : (
             <Editor<Informe>
               endpoint={API_ENDPOINTS.INFORMES}
+              saveEndpoint={API_ENDPOINTS.INFORMES_EDITOR}
               fields={INFORME_FIELDS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
