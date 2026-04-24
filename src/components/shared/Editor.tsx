@@ -202,9 +202,16 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
                 onChange={(e) => handleChange(campo.name, e.target.value)}
               >
                 <option value="">Selecciona una opcion</option>
-                {(campo.options ?? []).map((option) => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
+                {(campo.options ?? []).map((option: any, index: number) => {
+                  const valor = typeof option === 'object' ? option.value : option;
+                  const etiqueta = typeof option === 'object' ? option.label : option;
+                  
+                  return (
+                    <option key={valor ?? index} value={valor}>
+                      {etiqueta}
+                    </option>
+                  );
+                })}
               </select>
             ) : campo.type === 'multiselect' ? (
               <Multiselect
