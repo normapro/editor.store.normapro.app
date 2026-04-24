@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
@@ -7,6 +7,7 @@ import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
 
 const HISTORIACLIENTE_FIELDS: CampoEsquema<HistoriaCliente>[] = [
+  { name: "id_cliente", label: "Empresa", type: "select", options: [] },
   { name: "nombre", label: "Nombre empresa", type: "text" },
   { name: "slug", label: "Slug", type: "text" },
   { name: "descripcion", label: "Descripción", type: "text" },
@@ -18,6 +19,37 @@ export default function HistoriasClientesPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [HISTORIACLIENTE_FIELDS_OPTIONS, setFields] = useState(HISTORIACLIENTE_FIELDS);
+
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const cargarPacks = async () => {
+      try {
+        const res = await fetch(`${API_ENDPOINTS.CLIENTES}?maxItems=50`);
+        if (!res.ok) throw new Error("Error en red");
+        const packs = await res.json();
+
+        if (isMounted) {
+          const opciones = packs.map((p: any) => ({
+            label: p.description,
+            value: p.id_cliente
+          }));
+
+          setFields(HISTORIACLIENTE_FIELDS.map(f => 
+            f.name === "id_cliente" ? { ...f, options: opciones } : f
+          ));
+        }
+      } catch (err) {
+        console.error("Error cargando clientes:", err);
+      }
+    };
+
+    cargarPacks();
+
+    return () => { isMounted = false; };
+  }, []);
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -57,7 +89,7 @@ export default function HistoriasClientesPage() {
           ) : (
             <Editor<HistoriaCliente>
               endpoint={API_ENDPOINTS.HISTORIAS}
-              fields={HISTORIACLIENTE_FIELDS}
+              fields={HISTORIACLIENTE_FIELDS_OPTIONS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
