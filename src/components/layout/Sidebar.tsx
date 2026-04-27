@@ -20,6 +20,7 @@ const navItems = [
   { label: "Informes", icon: FileText, to: "/informes" },
   { label: "Eventos", icon: Calendar, to: "/eventos" },
   { label: "Consultorias", icon: Briefcase, to: "/consultorias" },
+  { label: "Ambitos", icon: Package, to: "/ambitos" },
 ];
 
 export default function Sidebar() {

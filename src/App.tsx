@@ -14,6 +14,7 @@ import InformesPage from "./pages/modules/InformesPage";
 import PacksPage from "./pages/modules/PacksPage";
 import SolucionesPage from "./pages/modules/SolucionesPage";
 import TestimoniosPage from "./pages/modules/TestimoniosPage";
+import AmbitosPage from "./pages/modules/AmbitosPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="/packs" element={<PacksPage />} />
           <Route path="/soluciones" element={<SolucionesPage />} />
           <Route path="/testimonios" element={<TestimoniosPage />} />
+          <Route path="/ambitos" element={<AmbitosPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

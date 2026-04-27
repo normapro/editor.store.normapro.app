@@ -25,6 +25,7 @@ const mainModules = [
 const secondaryModules = [
   { label: "Soluciones", icon: Lightbulb, color: "bg-amber-500", to: "/soluciones" },
   { label: "Packs", icon: Package, color: "bg-emerald-500", to: "/packs" },
+  { label: "Ambitos", icon: Package, color: "bg-emerald-500", to: "/ambitos" },
 ];
 
 export default function Dashboard() {
@@ -74,7 +75,7 @@ export default function Dashboard() {
         <h3 className="text-[15px] font-semibold text-text-primary mt-10 mb-4">
           Catálogo técnico
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {secondaryModules.map((item) => (
             <Link
               key={item.label}

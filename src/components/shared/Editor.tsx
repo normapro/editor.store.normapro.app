@@ -114,6 +114,8 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       });
 
       if (!res.ok) {
+        const errorMsg = await res.text();
+        console.error("ERROR DEL BACKEND:", errorMsg);
         throw new Error('save_failed');
       }
 
@@ -207,7 +209,7 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
                 {(campo.options ?? []).map((option: any, index: number) => {
                   const valor = typeof option === 'object' ? option.value : option;
                   const etiqueta = typeof option === 'object' ? option.label : option;
-                  
+
                   return (
                     <option key={valor ?? index} value={valor}>
                       {etiqueta}
