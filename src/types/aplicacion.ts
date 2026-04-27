@@ -4,5 +4,5 @@ export interface Aplicacion {
   uriIcon: string;
   shortDescription: string;
   slug: string;
-  contenidos: string;
+  contenidos: unknown[] | string | null;
 }

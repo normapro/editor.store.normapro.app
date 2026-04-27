@@ -6,6 +6,7 @@ import InicioSesionPage from "./pages/InicioSesionPage";
 import Dashboard from "./pages/Dashboard";
 import ActualidadPage from "./pages/modules/ActualidadPage";
 import AplicacionesPage from "./pages/modules/AplicacionesPage";
+import AplicacionContenidoPage from "./pages/modules/AplicacionContenidoPage";
 import ConsultoriasPage from "./pages/modules/ConsultoriasPage";
 import EventosPage from "./pages/modules/EventosPage";
 import HistoriasPage from "./pages/modules/HistoriasPage";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/actualidad" element={<ActualidadPage />} />
           <Route path="/aplicaciones" element={<AplicacionesPage />} />
+          <Route path="/aplicaciones/:id/contenido" element={<AplicacionContenidoPage />} />
           <Route path="/consultorias" element={<ConsultoriasPage />} />
           <Route path="/eventos" element={<EventosPage />} />
           <Route path="/historias" element={<HistoriasPage />} />

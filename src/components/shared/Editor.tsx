@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { CampoEsquema } from '../../types/editor';
 import { getEditorToken } from '../../auth/session';
 import { ParagraphsEditor } from '../campos/ParagraphsEditor';
@@ -6,6 +6,7 @@ import { Multiselect } from '../campos/Multiselect';
 import { ContenidoInforme } from '../campos/ContenidoInforme';
 import { IndiceInformeEditor } from '../campos/IndiceInformeEditor';
 import { AutoresInformeEditor } from '../campos/AutoresInformeEditor';
+import { ComponentesJsonEditor } from '../campos/ComponentesJsonEditor';
 
 interface EditorProps<T extends object> {
   endpoint: string;
@@ -14,9 +15,10 @@ interface EditorProps<T extends object> {
   idEdicion: number | string | null;
   onCerrar: () => void;
   onGuardado?: () => void;
+  extraBeforeActions?: ReactNode;
 }
 
-export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdicion, onCerrar, onGuardado }: EditorProps<T>) {
+export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdicion, onCerrar, onGuardado, extraBeforeActions }: EditorProps<T>) {
   const [formData, setFormData] = useState<Partial<T>>({});
   const [hasError, setHasError] = useState(false);
 
@@ -232,6 +234,12 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
                 value={valorActual}
                 onChange={(newValue) => handleChange(campo.name, newValue)}
               />
+            ) : campo.type === 'componentes_json' ? (
+              <ComponentesJsonEditor
+                value={valorActual}
+                onChange={(newValue) => handleChange(campo.name, newValue)}
+                library={campo.componentLibrary ?? []}
+              />
             ) : (
               <input
                 type={campo.type}
@@ -243,6 +251,8 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
           </div>
         );
       })}
+
+      {extraBeforeActions}
 
       <div className="flex gap-2">
         <button type="submit" className="rounded-lg bg-accent px-4 py-2 text-white hover:opacity-90">Guardar</button>
