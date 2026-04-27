@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import { Editor } from "../../components/shared/Editor";
@@ -12,7 +12,7 @@ const ACTUALIDAD_FIELDS: CampoEsquema<Actualidad>[] = [
   { name: "slug", label: "Slug", type: "text" },
   { name: "fecha", label: "Fecha", type: "date" },
   { name: "categoria", label: "Categoria", type: "multiselect", options: ["Destacadas", "Tecnología", "Salud", 'Mediambiente', 'Digitalizacion', 'Formación', 'Industria', 'Seguridad alimentaria'] },
-  { name: "id_pack", label: "Id pack", type: "number" },
+  { name: "id_pack", label: "Pack", type: "select" },
   { name: "id_soluciones", label: "Id soluciones", type: "text" },
   { name: "imagen", label: "Imagen", type: "text" },
   { name: "content", label: "Contenido", type: "paragraphs" },
@@ -22,6 +22,36 @@ export default function ActualidadPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [ACTUALIDAD_FIELDS_OPTIONS, setFields] = useState(ACTUALIDAD_FIELDS);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const cargarPacks = async () => {
+      try {
+        const res = await fetch(`${API_ENDPOINTS.LISTPACKS}?maxItems=50`);
+        if (!res.ok) throw new Error("Error en red");
+        const packs = await res.json();
+
+        if (isMounted) {
+          const opciones = packs.map((p: any) => ({
+            label: p.description,
+            value: p.id_pack
+          }));
+
+          setFields(ACTUALIDAD_FIELDS.map(f => 
+            f.name === "id_pack" ? { ...f, options: opciones } : f
+          ));
+        }
+      } catch (err) {
+        console.error("Error cargando packs:", err);
+      }
+    };
+
+    cargarPacks();
+
+    return () => { isMounted = false; };
+  }, []);
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -91,7 +121,7 @@ export default function ActualidadPage() {
             <Editor<Actualidad>
               endpoint={API_ENDPOINTS.ACTUALIDAD}
               saveEndpoint={API_ENDPOINTS.ACTUALIDAD_EDITOR}
-              fields={ACTUALIDAD_FIELDS}
+              fields={ACTUALIDAD_FIELDS_OPTIONS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
