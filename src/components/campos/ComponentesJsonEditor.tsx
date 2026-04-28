@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ComponentLibraryItem, ComponentPropDefinition, ComponentPropType } from "../../types/editor";
+import { DesgraneListEditor } from "./listEditors/DesgraneListEditor";
+import { LIST_EDITOR_REGISTRY } from "./listEditors/registry";
 
 type Bloque = {
   id: number | string;
@@ -498,7 +500,11 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
               {fields.length === 0 ? (
                 <p className="text-sm text-text-muted">Este componente no tiene campos todavia.</p>
               ) : (
-                fields.map((field, fieldIndex) => (
+                fields.map((field, fieldIndex) => {
+                  const listEditorKey = `${selected?.tipo}.${field.key}`;
+                  const ListEditorComponent = LIST_EDITOR_REGISTRY[listEditorKey];
+
+                  return (
                   <div key={`${field.key}-${fieldIndex}`} className="rounded-md border border-border bg-surface-alt p-3">
                     <div className="mb-2 text-sm font-semibold text-text-secondary">
                       {field.label}
@@ -541,6 +547,17 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
                         placeholder="Un valor por linea"
                       />
                     ) : field.type === "json" ? (
+                      selected?.tipo === "DesgraneSection" && field.key === "list" ? (
+                        <DesgraneListEditor
+                          value={field.value}
+                          onChange={(nextList) => updateField(fieldIndex, nextList, true)}
+                        />
+                      ) : ListEditorComponent ? (
+                        <ListEditorComponent
+                          value={field.value}
+                          onChange={(nextValue) => updateField(fieldIndex, nextValue, true)}
+                        />
+                      ) : (
                       <>
                         <textarea
                           className="min-h-24 w-full rounded-md border border-border bg-surface px-2 py-1 font-mono text-sm text-text-primary"
@@ -589,6 +606,7 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
                           </p>
                         ) : null}
                       </>
+                      )
                     ) : field.type === "textarea" ? (
                       <textarea
                         className="min-h-24 w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-text-primary"
@@ -604,7 +622,7 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
                       />
                     )}
                   </div>
-                ))
+                )})
               )}
             </div>
           ) : (
