@@ -21,6 +21,9 @@ const navItems = [
   { label: "Eventos", icon: Calendar, to: "/eventos" },
   { label: "Consultorias", icon: Briefcase, to: "/consultorias" },
   { label: "Ambitos", icon: Package, to: "/ambitos" },
+  { label: "Sectores", icon: Package, to: "/sectores" },
+  { label: "SolucionesAmbitos", icon: Package, to: "/soluciones-ambitos" },
+  { label: "SolucionesAmbitosSectores", icon: Package, to: "/soluciones-ambitos-sectores" },
 ];
 
 export default function Sidebar() {

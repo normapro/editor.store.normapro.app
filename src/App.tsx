@@ -16,6 +16,7 @@ import SolucionesPage from "./pages/modules/SolucionesPage";
 import TestimoniosPage from "./pages/modules/TestimoniosPage";
 import AmbitosPage from "./pages/modules/AmbitosPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import SectoresPage from "./pages/modules/SectoresPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/soluciones" element={<SolucionesPage />} />
           <Route path="/testimonios" element={<TestimoniosPage />} />
           <Route path="/ambitos" element={<AmbitosPage />} />
+          <Route path="/sectores" element={<SectoresPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

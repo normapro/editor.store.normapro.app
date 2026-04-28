@@ -25,7 +25,10 @@ const mainModules = [
 const secondaryModules = [
   { label: "Soluciones", icon: Lightbulb, color: "bg-amber-500", to: "/soluciones" },
   { label: "Packs", icon: Package, color: "bg-emerald-500", to: "/packs" },
-  { label: "Ambitos", icon: Package, color: "bg-emerald-500", to: "/ambitos" },
+  { label: "Ambitos", icon: Package, color: "bg-yellow-500", to: "/ambitos" },
+  { label: "Sectores", icon: Package, color: "bg-lime-500", to: "/sectores" },
+  { label: "SolucionesAmbitos", icon: Package, color: "bg-violet-500", to: "/soluciones-ambitos" },
+  { label: "SolucionesAmbitosSectores", icon: Package, color: "bg-fuchsia-500", to: "/soluciones-ambitos-sectores" },
 ];
 
 export default function Dashboard() {
