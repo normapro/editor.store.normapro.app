@@ -5,6 +5,7 @@ const API_BASE_URL = import.meta.env.DEV
 const API_ENDPOINTS = {
   AMBITOS: `${API_BASE_URL}/v1/store/ambitos`,
   AMBITOS_SOLUCIONES: `${API_BASE_URL}/v1/store/ambitosWithSolCounter`,
+  SOLUCIONES_EDITOR_READ: `${API_BASE_URL}/v1/store/soluciones-editor`,
   LISTSOLUCIONES: `${API_BASE_URL}/v1/store/listsoluciones`,
   SECTORES: `${API_BASE_URL}/v1/store/sectores`,
   HIGLIGHTEDPACKS: `${API_BASE_URL}/v1/store/highlighted/packs`,
@@ -30,6 +31,7 @@ const API_ENDPOINTS = {
   CONSULTORIA_EDITOR: `${API_BASE_URL}/v1/editor/store/consultoria`,
   AMBITOS_EDITOR: `${API_BASE_URL}/v1/editor/store/ambitos`,
   SECTORES_EDITOR: `${API_BASE_URL}/v1/editor/store/sectores`,
+  SOLUCIONES_EDITOR: `${API_BASE_URL}/v1/editor/store/soluciones`,
   EDITOR_LOGIN: `${API_BASE_URL}/v1/editor-auth/login`,
 };
 

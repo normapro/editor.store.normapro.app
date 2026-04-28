@@ -7,16 +7,14 @@ export interface ItemListSolucion {
   slug: string;
   id_ambito?: number;
   id_sector?: number;
-  slug_ambito?: string;
-  slug_sector?: string;
 }
 
 export interface Solucion extends ItemListSolucion {
   titleweb: string;
   textoprincipal_titulo: string;
   textoprincipal_parrafo: string;
-  multimedia_uri: string;
-  multimedia_type_id: number;
+  multimediaUri: string;
+  multimediaTypeId: number;
   problemaTitle: string;
   problemaPragma: string;
   solucionTitle: string;
@@ -33,8 +31,8 @@ export interface Solucion extends ItemListSolucion {
   secondCtaPragma: string;
   consultoriaTitle: string;
   consultoriaDescription: string;
-  fraseCierre: string;
-  thread_id: string;
+  fraseCierre?: string;
+  thread_id?: string;
 }
 
 export interface Problema {
