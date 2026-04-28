@@ -142,8 +142,8 @@ function normalizeFieldValue(fieldType: ComponentPropType, rawValue: unknown): u
 
     return String(rawValue ?? "")
       .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
+      .map((line) => line.replace(/\r/g, ""))
+      .filter((line) => line.trim().length > 0);
   }
 
   if (fieldType === "json") {
@@ -165,6 +165,7 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
   const [formError, setFormError] = useState<string | null>(null);
   const [advancedMode, setAdvancedMode] = useState(false);
   const [jsonDraft, setJsonDraft] = useState("{}");
+  const [previewItem, setPreviewItem] = useState<ComponentLibraryItem | null>(null);
 
   useEffect(() => {
     if (bloques.length === 0) {
@@ -275,11 +276,14 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
     setEditorOpenIndex((prev) => (prev === index ? null : index));
   };
 
-  const updateField = (fieldIndex: number, value: unknown) => {
+  const updateField = (fieldIndex: number, value: unknown, shouldCommit: boolean = true) => {
     const next = [...fields];
     next[fieldIndex] = { ...next[fieldIndex], value };
     setFields(next);
-    commitFieldsToSelected(next);
+
+    if (shouldCommit) {
+      commitFieldsToSelected(next);
+    }
   };
 
   const commitJsonDraft = () => {
@@ -313,96 +317,134 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-[1.9fr_1fr]">
         <div className="space-y-4 rounded-lg border border-border bg-surface p-3">
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-bold text-text-primary">Contenido configurado</h4>
-          <span className="text-xs text-text-muted">{bloques.length} bloques</span>
-        </div>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-bold text-text-primary">Contenido configurado</h4>
+            <span className="text-xs text-text-muted">{bloques.length} bloques</span>
+          </div>
 
-        <div className="max-h-72 space-y-2 overflow-auto rounded-md border border-border bg-surface-alt p-2">
-          {bloques.length === 0 ? (
-            <p className="px-2 py-3 text-sm text-text-muted">No hay componentes anadidos aun.</p>
-          ) : (
-            bloques.map((bloque, index) => (
-              <div
-                key={`bloque-${bloque.id}-${index}`}
-                className={`rounded-md border px-3 py-2 transition ${
-                  selectedIndex === index
-                    ? "border-accent bg-accent/10"
-                    : "border-border bg-surface"
-                }`}
-              >
-                <button
-                  type="button"
-                  className="w-full text-left"
-                  onClick={() => setSelectedIndex(index)}
+          <div className="h-[36rem] space-y-2 overflow-auto rounded-md border border-border bg-surface-alt p-2">
+            {bloques.length === 0 ? (
+              <p className="px-2 py-3 text-sm text-text-muted">No hay componentes anadidos aun.</p>
+            ) : (
+              bloques.map((bloque, index) => (
+                <div
+                  key={`bloque-${bloque.id}-${index}`}
+                  className={`rounded-md border px-3 py-2 transition ${selectedIndex === index
+                      ? "border-accent bg-accent/10"
+                      : "border-border bg-surface"
+                    }`}
                 >
-                  <div className="text-xs text-text-muted">#{index + 1} - id {String(bloque.id)}</div>
-                  <div className="text-sm font-bold text-text-primary">{bloque.tipo || "Sin tipo"}</div>
-                </button>
-
-                <div className="mt-2">
                   <button
                     type="button"
-                    className="rounded-md border border-border px-2 py-1 text-xs text-text-secondary hover:bg-surface-hover"
-                    onClick={() => abrirFormulario(index)}
+                    className="w-full text-left"
+                    onClick={() => setSelectedIndex(index)}
                   >
-                    {editorOpenIndex === index ? "Cerrar formulario" : "Abrir formulario"}
+                    <div className="text-xs text-text-muted">#{index + 1} - id {String(bloque.id)}</div>
+                    <div className="text-sm font-bold text-text-primary">{bloque.tipo || "Sin tipo"}</div>
                   </button>
+
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      className="rounded-md border border-border px-2 py-1 text-xs text-text-secondary hover:bg-surface-hover"
+                      onClick={() => abrirFormulario(index)}
+                    >
+                      {editorOpenIndex === index ? "Cerrar formulario" : "Abrir formulario"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
         </div>
 
         <aside className="space-y-3 rounded-lg border border-border bg-surface p-3">
-        <h4 className="text-sm font-bold text-text-primary">Biblioteca de componentes</h4>
-        <input
-          type="text"
-          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary"
-          placeholder="Buscar componente por nombre o tipo"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <div className="max-h-[36rem] overflow-auto pr-1">
-          {filteredLibrary.length === 0 ? (
-            <p className="rounded-md border border-border bg-surface-alt px-3 py-4 text-sm text-text-muted">
-              No hay componentes que coincidan con tu busqueda.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {filteredLibrary.map((item) => (
-                <div key={item.type} className="rounded-md border border-border bg-surface-alt p-2">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.label}
-                      className="mb-2 h-32 w-full rounded-md border border-border object-cover"
-                    />
-                  ) : (
-                    <div className="mb-2 grid h-32 w-full place-items-center rounded-md border border-border bg-gradient-to-br from-slate-100 to-slate-200 text-xs text-text-muted">
-                      Vista previa
-                    </div>
-                  )}
+          <h4 className="text-sm font-bold text-text-primary">Biblioteca de componentes</h4>
+          <input
+            type="text"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary"
+            placeholder="Buscar componente por nombre o tipo"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="max-h-[36rem] overflow-auto pr-1">
+            {filteredLibrary.length === 0 ? (
+              <p className="rounded-md border border-border bg-surface-alt px-3 py-4 text-sm text-text-muted">
+                No hay componentes que coincidan con tu busqueda.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {filteredLibrary.map((item) => (
+                  <div key={item.type} className="rounded-md border border-border bg-surface-alt p-2">
+                    {item.image ? (
+                      <button
+                        type="button"
+                        className="mb-2 block w-full cursor-zoom-in"
+                        onClick={() => setPreviewItem(item)}
+                        aria-label={`Ver previsualizacion ampliada de ${item.label}`}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.label}
+                          className="h-32 w-full rounded-md border border-border object-cover"
+                        />
+                      </button>
+                    ) : (
+                      <div className="mb-2 grid h-32 w-full place-items-center rounded-md border border-border bg-gradient-to-br from-slate-100 to-slate-200 text-xs text-text-muted">
+                        Vista previa
+                      </div>
+                    )}
 
-                  <div className="text-sm font-bold text-text-primary">{item.label}</div>
-                  <div className="text-xs text-text-muted">{item.type}</div>
-                  {item.description ? <p className="mt-1 text-xs text-text-muted">{item.description}</p> : null}
+                    <div className="text-sm font-bold text-text-primary">{item.label}</div>
+                    <div className="text-xs text-text-muted">{item.type}</div>
+                    {item.description ? <p className="mt-1 text-xs text-text-muted">{item.description}</p> : null}
 
-                  <button
-                    type="button"
-                    className="mt-2 w-full rounded-md bg-accent px-3 py-1.5 text-sm text-white hover:opacity-90"
-                    onClick={() => addFromLibrary(item)}
-                  >
-                    Anadir
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                    <button
+                      type="button"
+                      className="mt-2 w-full rounded-md bg-accent px-3 py-1.5 text-sm text-white hover:opacity-90"
+                      onClick={() => addFromLibrary(item)}
+                    >
+                      Anadir
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </aside>
       </div>
+
+      {previewItem?.image ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setPreviewItem(null)}
+        >
+          <div
+            className="w-full max-w-5xl rounded-xl border border-border bg-surface p-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <h5 className="text-base font-bold text-text-primary">{previewItem.label}</h5>
+                <p className="text-xs text-text-muted">{previewItem.type}</p>
+              </div>
+              <button
+                type="button"
+                className="rounded-md border border-border px-3 py-1 text-sm text-text-secondary hover:bg-surface-hover"
+                onClick={() => setPreviewItem(null)}
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <img
+              src={previewItem.image}
+              alt={previewItem.label}
+              className="max-h-[80vh] w-full rounded-md border border-border object-contain bg-surface-alt"
+            />
+          </div>
+        </div>
+      ) : null}
 
       {selected && editorOpenIndex === selectedIndex ? (
         <div className="space-y-2 rounded-lg border border-border bg-surface p-3">
@@ -477,33 +519,88 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
                         type="number"
                         className="w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-text-primary"
                         value={String(field.value ?? 0)}
-                          onChange={(e) => updateField(fieldIndex, e.target.value)}
+                        onChange={(e) => updateField(fieldIndex, e.target.value)}
                       />
                     ) : field.type === "stringList" ? (
                       <textarea
                         className="min-h-24 w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-text-primary"
-                        value={Array.isArray(field.value) ? field.value.join("\n") : ""}
-                          onChange={(e) => updateField(fieldIndex, e.target.value)}
+                        value={
+                          Array.isArray(field.value)
+                            ? field.value.join("\n")
+                            : typeof field.value === "string"
+                              ? field.value
+                              : ""
+                        }
+                        onChange={(e) => updateField(fieldIndex, e.target.value, false)}
+                        onBlur={(e) => {
+                          const next = [...fields];
+                          next[fieldIndex] = { ...next[fieldIndex], value: e.target.value };
+                          setFields(next);
+                          commitFieldsToSelected(next);
+                        }}
                         placeholder="Un valor por linea"
                       />
                     ) : field.type === "json" ? (
-                      <textarea
-                        className="min-h-24 w-full rounded-md border border-border bg-surface px-2 py-1 font-mono text-sm text-text-primary"
-                        value={JSON.stringify(field.value ?? {}, null, 2)}
-                          onChange={(e) => updateField(fieldIndex, e.target.value)}
-                      />
+                      <>
+                        <textarea
+                          className="min-h-24 w-full rounded-md border border-border bg-surface px-2 py-1 font-mono text-sm text-text-primary"
+                          value={
+                            typeof field.value === "string"
+                              ? field.value
+                              : JSON.stringify(field.value ?? {}, null, 2)
+                          }
+                          onChange={(e) => updateField(fieldIndex, e.target.value, false)}
+                          onBlur={(e) => {
+                            const raw = e.target.value;
+                            const next = [...fields];
+                            next[fieldIndex] = { ...next[fieldIndex], value: raw };
+                            setFields(next);
+
+                            const trimmed = raw.trim();
+                            if (trimmed === "") {
+                              const fallbackValue = Array.isArray(field.value) ? [] : {};
+                              updateField(fieldIndex, fallbackValue, true);
+                              setFormError(null);
+                              return;
+                            }
+
+                            try {
+                              const parsed = JSON.parse(raw);
+                              updateField(fieldIndex, parsed, true);
+                              setFormError(null);
+                            } catch {
+                              setFormError("JSON invalido. Revisa llaves, comas y comillas.");
+                            }
+                          }}
+                        />
+
+                        {selected?.tipo === "CaracteristicasIncorporadas" && field.key === "data" ? (
+                          <p className="mt-2 whitespace-pre-wrap rounded-md border border-border bg-surface px-2 py-2 font-mono text-xs text-text-muted">
+                            {`Ejemplo de objeto en data:
+{
+  "id_data": 3,
+  "title": "Biblioteca de componentes",
+  "icon": "fa-grid-2-plus",
+  "mainTitle": "Acelera la creacion de flujos utilizando componentes predefinidos",
+  "subtitle": "Biblioteca de componentes",
+  "description": "Crear flujos desde cero puede ser lento y complejo. NormaPro BPM ofrece una biblioteca de componentes predefinidos, como formularios, aprobaciones y notificaciones, que agilizan la creacion de flujos.\n\nAhorro de tiempo, flujos consistentes y capacidad de implementar rapidamente nuevas iniciativas.",
+  "img": "bibliotecacomponentes.png"
+}`}
+                          </p>
+                        ) : null}
+                      </>
                     ) : field.type === "textarea" ? (
                       <textarea
                         className="min-h-24 w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-text-primary"
                         value={String(field.value ?? "")}
-                          onChange={(e) => updateField(fieldIndex, e.target.value)}
+                        onChange={(e) => updateField(fieldIndex, e.target.value)}
                       />
                     ) : (
                       <input
                         type="text"
                         className="w-full rounded-md border border-border bg-surface px-2 py-1 text-sm text-text-primary"
                         value={String(field.value ?? "")}
-                          onChange={(e) => updateField(fieldIndex, e.target.value)}
+                        onChange={(e) => updateField(fieldIndex, e.target.value)}
                       />
                     )}
                   </div>
