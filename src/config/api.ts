@@ -18,6 +18,7 @@ const API_ENDPOINTS = {
   INFORMES: `${API_BASE_URL}/v1/store/informes`,
   APLICACIONES: `${API_BASE_URL}/v1/store/aplicaciones`,
   CONSULTORIA: `${API_BASE_URL}/v1/store/consultoria`,
+  CONSULTORIA_EDITOR_READ: `${API_BASE_URL}/v1/store/consultoria/id`,
   PACKS: `${API_BASE_URL}/v1/store/packs`,
   COOKIES: `${API_BASE_URL}/v1/store/cookies`,
   EVENTOS: `${API_BASE_URL}/v1/store/eventos`,

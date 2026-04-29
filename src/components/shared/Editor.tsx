@@ -89,7 +89,10 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
     setHasError(false);
 
     const metodo = idEdicion !== null ? 'PUT' : 'POST';
-    const writeBase = saveEndpoint ?? endpoint;
+    const inferredWriteBase = endpoint.includes('/v1/store/')
+      ? endpoint.replace('/v1/store/', '/v1/editor/store/')
+      : endpoint;
+    const writeBase = saveEndpoint ?? inferredWriteBase;
     const url = idEdicion !== null ? `${writeBase}/${idEdicion}` : writeBase;
     const token = getEditorToken();
 

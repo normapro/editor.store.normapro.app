@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
 import type { HistoriaCliente } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
+import { getEditorToken } from "../../auth/session";
 
 const HISTORIACLIENTE_FIELDS: CampoEsquema<HistoriaCliente>[] = [
   { name: "id_cliente", label: "Empresa", type: "select", options: [] },
@@ -12,10 +14,10 @@ const HISTORIACLIENTE_FIELDS: CampoEsquema<HistoriaCliente>[] = [
   { name: "slug", label: "Slug", type: "text" },
   { name: "descripcion", label: "Descripción", type: "text" },
   { name: "imagen", label: "Imagen", type: "text" },
-  { name: "componentes", label: "Contenido", type: "textarea" },
 ];
 
 export default function HistoriasClientesPage() {
+  const navigate = useNavigate();
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -69,6 +71,43 @@ export default function HistoriasClientesPage() {
     setReloadKey((prev) => prev + 1);
   };
 
+  const abrirEditorContenido = () => {
+    if (idEdicion === null) {
+      window.alert("Primero crea y guarda la historia. Luego podras editar su contenido.");
+      return;
+    }
+
+    navigate(`/historias/${idEdicion}/contenido`);
+  };
+
+  const onDelete = async (id: number | string) => {
+    const confirmar = window.confirm("Vas a eliminar esta historia. Esta accion no se puede deshacer. ¿Continuar?");
+    if (!confirmar) {
+      return;
+    }
+
+    const token = getEditorToken();
+    const headers: HeadersInit = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await fetch(`${API_ENDPOINTS.HISTORIAS_EDITOR}/${id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!res.ok) {
+        throw new Error("delete_failed");
+      }
+
+      setReloadKey((prev) => prev + 1);
+    } catch {
+      window.alert("No se pudo eliminar la historia.");
+    }
+  };
+
   return (
     <>
       <Header 
@@ -84,15 +123,28 @@ export default function HistoriasClientesPage() {
               titleField="nombre"
               onAdd={abrirCrear}
               onEdit={abrirEditar}
+              onDelete={onDelete}
               reloadKey={reloadKey}
             />
           ) : (
             <Editor<HistoriaCliente>
               endpoint={API_ENDPOINTS.HISTORIAS}
+              saveEndpoint={API_ENDPOINTS.HISTORIAS_EDITOR}
               fields={HISTORIACLIENTE_FIELDS_OPTIONS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <div className="flex justify-start">
+                  <button
+                    type="button"
+                    className="rounded-lg border border-border px-4 py-2 text-sm text-text-secondary hover:bg-surface-hover"
+                    onClick={abrirEditorContenido}
+                  >
+                    Editar contenido
+                  </button>
+                </div>
+              )}
             />
           )}
         </div>

@@ -8,8 +8,10 @@ import ActualidadPage from "./pages/modules/ActualidadPage";
 import AplicacionesPage from "./pages/modules/AplicacionesPage";
 import AplicacionContenidoPage from "./pages/modules/AplicacionContenidoPage";
 import ConsultoriasPage from "./pages/modules/ConsultoriasPage";
+import ConsultoriaContenidoPage from "./pages/modules/ConsultoriaContenidoPage";
 import EventosPage from "./pages/modules/EventosPage";
 import HistoriasPage from "./pages/modules/HistoriasPage";
+import HistoriaContenidoPage from "./pages/modules/HistoriaContenidoPage";
 import InformesPage from "./pages/modules/InformesPage";
 import PacksPage from "./pages/modules/PacksPage";
 import SolucionesPage from "./pages/modules/SolucionesPage";
@@ -30,8 +32,10 @@ function App() {
           <Route path="/aplicaciones" element={<AplicacionesPage />} />
           <Route path="/aplicaciones/:id/contenido" element={<AplicacionContenidoPage />} />
           <Route path="/consultorias" element={<ConsultoriasPage />} />
+          <Route path="/consultorias/:id/contenido" element={<ConsultoriaContenidoPage />} />
           <Route path="/eventos" element={<EventosPage />} />
           <Route path="/historias" element={<HistoriasPage />} />
+          <Route path="/historias/:id/contenido" element={<HistoriaContenidoPage />} />
           <Route path="/informes" element={<InformesPage />} />
           <Route path="/packs" element={<PacksPage />} />
           <Route path="/soluciones" element={<SolucionesPage />} />
