@@ -28,6 +28,8 @@ const SOLUCION_FIELDS: CampoEsquema<Solucion>[] = [
   { name: "beneficiosPragma", label: "Pragma de beneficios", type: "textarea" },
   { name: "firstCtaTitle", label: "Título del primer CTA", type: "text" },
   { name: "firstCtaPragma", label: "Pragma del primer CTA", type: "textarea" },
+  { name: "secondCtaTitle", label: "Título del segundo CTA", type: "text" },
+  { name: "secondCtaPragma", label: "Pragma del segundo CTA", type: "textarea" }
 ];
 
 export default function SolucionesPage() {
@@ -66,7 +68,7 @@ export default function SolucionesPage() {
     }
 
     try {
-      const res = await fetch(`${API_ENDPOINTS.SOLUCIONES_EDITOR}/${id}`, {
+      const res = await fetch(`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones/${id}`, {
         method: "DELETE",
         headers,
       });
@@ -102,7 +104,7 @@ export default function SolucionesPage() {
           ) : (
             <Editor<Solucion>
               endpoint={API_ENDPOINTS.SOLUCIONES_EDITOR_READ + "/soluciones"}
-              saveEndpoint={API_ENDPOINTS.SOLUCIONES_EDITOR}
+              saveEndpoint={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones`}
               fields={SOLUCION_FIELDS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
