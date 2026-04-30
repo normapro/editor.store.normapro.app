@@ -20,6 +20,7 @@ const mainModules = [
   { label: "Testimonios", icon: MessageSquareQuote, color: "bg-pink-500", to: "/testimonios" },
   { label: "Aplicaciones", icon: AppWindow, color: "bg-cyan-500", to: "/aplicaciones" },
   { label: "Consultorias", icon: Briefcase, color: "bg-indigo-500", to: "/consultorias" },
+  { label: "Clientes", icon: Briefcase, color: "bg-violet-500", to: "/clientes" },
 ];
 
 const secondaryModules = [

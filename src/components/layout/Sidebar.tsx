@@ -24,6 +24,7 @@ const navItems = [
   { label: "Sectores", icon: Package, to: "/sectores" },
   { label: "SolucionesAmbitos", icon: Package, to: "/soluciones-ambitos" },
   { label: "SolucionesAmbitosSectores", icon: Package, to: "/soluciones-ambitos-sectores" },
+  { label: "Clientes", icon: Briefcase, to: "/clientes" },
 ];
 
 export default function Sidebar() {
