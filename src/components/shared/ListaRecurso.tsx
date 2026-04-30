@@ -5,8 +5,8 @@ interface ListaRecursoProps<T extends object> {
   endpoint: string;
   titleField: keyof T;
   onAdd?: () => void;
-  onEdit?: (id: number | string) => void;
-  onDelete?: (id: number | string) => void;
+  onEdit?: (id: number | string, item: T) => void; 
+  onDelete?: (id: number | string, item: T) => void;
   reloadKey?: number;
 }
 
@@ -21,20 +21,26 @@ function parseListResponse<T extends object>(payload: unknown): T[] {
   return [];
 }
 
-// Obtiene el ID tomando siempre la primera columna del objeto.
+// Obtiene la clave compuesta si es soluciones-ambitos o soluciones-ambitos-sectores
+// Si no obtiene el ID tomando la primera columna del objeto.
 // Si no existe o no es string/number, usa el indice como fallback.
 function resolveItemId<T extends object>(item: T, index: number): number | string {
-  const row = item as unknown as Record<string, unknown>;
+  const row = item as unknown as Record<string, any>;
+  
+  // Clave compuesta (Soluciones - Ambitos - Sectores)
+  if (row.id_solucion !== undefined && row.id_ambito !== undefined) {
+    let composite = `${row.id_solucion}-${row.id_ambito}`;
+    if (row.id_sector !== undefined) composite += `-${row.id_sector}`;
+    return composite;
+  }
+
+  // Primera columna
   const firstKey = Object.keys(row)[0];
-  if (!firstKey) {
-    return index;
+  if (firstKey && (typeof row[firstKey] === 'number' || typeof row[firstKey] === 'string')) {
+    return row[firstKey];
   }
 
-  const firstValue = row[firstKey];
-  if (typeof firstValue === 'number' || typeof firstValue === 'string') {
-    return firstValue;
-  }
-
+  // Fallback al indice
   return index;
 }
 
@@ -120,14 +126,14 @@ export function ListaRecurso<T extends object>({
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => onEdit?.(id)}
+                        onClick={() => onEdit?.(id, item)}
                         className="rounded-md border border-border px-3 py-1.5 text-text-secondary hover:bg-primary/10"
                       >
                         Editar
                       </button>
                       <button
                         type="button"
-                        onClick={() => onDelete?.(id)}
+                        onClick={() => onDelete?.(id, item)}
                         disabled={!onDelete}
                         className="rounded-md border border-border px-3 py-1.5 text-danger hover:bg-danger/10"
                       >
