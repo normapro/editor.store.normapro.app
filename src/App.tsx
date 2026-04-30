@@ -19,6 +19,9 @@ import TestimoniosPage from "./pages/modules/TestimoniosPage";
 import AmbitosPage from "./pages/modules/AmbitosPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SectoresPage from "./pages/modules/SectoresPage";
+import SolucionesAmbitosPage from "./pages/modules/SolucionesAmbitosPage";
+import SolucionesAmbitosSectoresPage from "./pages/modules/SolucionesAmbitosSectoresPage";
+import ClientesPage from "./pages/modules/ClientePage";
 
 function App() {
   return (
@@ -42,6 +45,9 @@ function App() {
           <Route path="/testimonios" element={<TestimoniosPage />} />
           <Route path="/ambitos" element={<AmbitosPage />} />
           <Route path="/sectores" element={<SectoresPage />} />
+          <Route path="/soluciones-ambitos" element={<SolucionesAmbitosPage />} />
+          <Route path="/soluciones-ambitos-sectores" element={<SolucionesAmbitosSectoresPage />} />
+          <Route path="/clientes" element={<ClientesPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
