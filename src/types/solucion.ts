@@ -49,6 +49,8 @@ export interface Faq {
 export interface Beneficio {
   id_beneficio: number;
   description: string;
+  solucionesAmbitosIds?: string[];
+  solucionesAmbitosSectoresIds?: string[];
 }
 
 export interface Caracteristica {

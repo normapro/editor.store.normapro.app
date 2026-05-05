@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
@@ -8,13 +8,59 @@ import { Editor } from "../../components/shared/Editor";
 import { getEditorToken } from "../../auth/session";
 
 const BENEFICIO_FIELDS: CampoEsquema<Beneficio>[] = [
-  { name: "description", label: "Nombre", type: "textarea" }
+  { name: "description", label: "Nombre", type: "textarea" },
+  { name: "solucionesAmbitosIds", label: "Soluciones-Ámbitos asociados", type: "multiselect", options: [] },
+  { name: "solucionesAmbitosSectoresIds", label: "Soluciones-Ámbitos-Sectores asociados", type: "multiselect", options: [] },
 ];
 
 export default function BeneficiosPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [BENEFICIO_FIELDS_OPTIONS, setFields] = useState(BENEFICIO_FIELDS);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const cargarOpcionesRelaciones = async () => {
+      try {
+        const [resSolucionesAmbitos, resSolucionesAmbitosSectores] = await Promise.all([
+          fetch(`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos`),
+          fetch(`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos-sectores`),
+        ]);
+
+        if (!resSolucionesAmbitos.ok || !resSolucionesAmbitosSectores.ok) throw new Error("Error cargando opciones");
+
+        const solucionesAmbitosData = await resSolucionesAmbitos.json();
+        const solucionesAmbitosSectoresData = await resSolucionesAmbitosSectores.json();
+
+        if (isMounted) {
+          const opcionesSolucionesAmbitos = solucionesAmbitosData.map((item: any) => ({
+            value: `${item.id_solucion}-${item.id_ambito}`,
+            label: item.description,
+          }));
+          const opcionesSolucionesAmbitosSectores = solucionesAmbitosSectoresData.map((item: any) => ({
+            value: `${item.id_solucion}-${item.id_ambito}-${item.id_sector}`,
+            label: item.description,
+          }));
+
+          setFields(BENEFICIO_FIELDS.map(f => {
+            if (f.name === "solucionesAmbitosIds") return { ...f, options: opcionesSolucionesAmbitos };
+            if (f.name === "solucionesAmbitosSectoresIds") return { ...f, options: opcionesSolucionesAmbitosSectores };
+            return f;
+          }));
+        }
+      } catch (err) {
+        console.error("Error cargando datos del editor:", err);
+      }
+    };
+
+    cargarOpcionesRelaciones();
+
+    return () => { isMounted = false; };
+  }, []);
+
+
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -84,7 +130,7 @@ export default function BeneficiosPage() {
             <Editor<Beneficio>
               endpoint={API_ENDPOINTS.BENEFICIOS}
               saveEndpoint={API_ENDPOINTS.BENEFICIOS_EDITOR}
-              fields={BENEFICIO_FIELDS}
+              fields={BENEFICIO_FIELDS_OPTIONS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
