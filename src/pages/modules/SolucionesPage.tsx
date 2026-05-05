@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
 import type { Solucion } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
+import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelationMultiSelector";
 import { getEditorToken } from "../../auth/session";
 
 const SOLUCION_FIELDS: CampoEsquema<Solucion>[] = [
@@ -36,6 +37,15 @@ export default function SolucionesPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+
+  const idSolucionActual = useMemo(() => {
+    if (idEdicion === null) {
+      return null;
+    }
+
+    const parsed = Number(idEdicion);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [idEdicion]);
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -109,6 +119,22 @@ export default function SolucionesPage() {
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <RemoteRelationMultiSelector
+                  title="Problemas relacionados"
+                  description="Selecciona los problemas que quieras asociar a esta solución simple."
+                  createModeMessage="Guarda la solución primero para poder relacionarla con problemas."
+                  entityId={idSolucionActual}
+                  catalogEndpoint={API_ENDPOINTS.PROBLEMAS}
+                  relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/problemas`}
+                  token={getEditorToken()}
+                  optionIdField="id_problema"
+                  optionLabelField="description"
+                  relationIdsField="id_problemas"
+                  createBodyField="id_problema"
+                  openLabel="Seleccionar problemas"
+                />
+              )}
             />
           )}
         </div>
