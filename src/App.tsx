@@ -22,6 +22,7 @@ import SectoresPage from "./pages/modules/SectoresPage";
 import SolucionesAmbitosPage from "./pages/modules/SolucionesAmbitosPage";
 import SolucionesAmbitosSectoresPage from "./pages/modules/SolucionesAmbitosSectoresPage";
 import ClientesPage from "./pages/modules/ClientePage";
+import BeneficiosPage from "./pages/modules/BeneficiosPage";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="/soluciones-ambitos" element={<SolucionesAmbitosPage />} />
           <Route path="/soluciones-ambitos-sectores" element={<SolucionesAmbitosSectoresPage />} />
           <Route path="/clientes" element={<ClientesPage />} />
+          <Route path="/beneficios" element={<BeneficiosPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
