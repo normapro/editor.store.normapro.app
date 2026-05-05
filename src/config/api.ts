@@ -39,6 +39,10 @@ const API_ENDPOINTS = {
   TESTIMONIOS_EDITOR: `${API_BASE_URL}/v1/editor/store/testimonios`,
   BENEFICIOS: `${API_BASE_URL}/v1/store/beneficios`,
   BENEFICIOS_EDITOR: `${API_BASE_URL}/v1/editor/store/beneficios`,
+  PROBLEMAS: `${API_BASE_URL}/v1/store/problemas`,
+  CASOS_DE_USO: `${API_BASE_URL}/v1/store/casos-de-uso`,
+  CARACTERISTICAS: `${API_BASE_URL}/v1/store/caracteristicas`,
+  FAQ: `${API_BASE_URL}/v1/store/faq`,
   EDITOR_LOGIN: `${API_BASE_URL}/v1/editor-auth/login`,
 };
 
