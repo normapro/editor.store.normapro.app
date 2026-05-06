@@ -27,6 +27,7 @@ interface RemoteRelationMultiSelectorProps {
   noSelectionText?: string;
   saveLabel?: string;
   savingLabel?: string;
+  searchPlaceholder?: string;
 }
 
 interface GenericOption {
@@ -53,8 +54,10 @@ export function RemoteRelationMultiSelector({
   noSelectionText = "No hay elementos seleccionados.",
   saveLabel = "Guardar relaciones",
   savingLabel = "Guardando relaciones...",
+  searchPlaceholder = "Buscar por nombre...",
 }: RemoteRelationMultiSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [options, setOptions] = useState<GenericOption[]>([]);
   const [selectedIds, setSelectedIds] = useState<RelationId[]>([]);
   const [savedIds, setSavedIds] = useState<RelationId[]>([]);
@@ -70,6 +73,22 @@ export function RemoteRelationMultiSelector({
     });
     return map;
   }, [options]);
+
+  const filteredOptions = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) {
+      return options;
+    }
+
+    return options.filter((option) => {
+      const fullLabel = option.label.toLowerCase();
+      const namePart = option.label.includes(" - ")
+        ? option.label.split(" - ").slice(1).join(" - ").toLowerCase()
+        : fullLabel;
+
+      return fullLabel.includes(term) || namePart.includes(term);
+    });
+  }, [options, searchTerm]);
 
   const hasId = (list: RelationId[], id: RelationId): boolean => {
     const target = String(id);
@@ -282,7 +301,15 @@ export function RemoteRelationMultiSelector({
             <button
               type="button"
               disabled={loadingOptions || loadingRelations || saving}
-              onClick={() => setIsOpen((prev) => !prev)}
+              onClick={() => {
+                setIsOpen((prev) => {
+                  const next = !prev;
+                  if (!next) {
+                    setSearchTerm("");
+                  }
+                  return next;
+                });
+              }}
               className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-text-secondary hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isOpen ? closeLabel : openLabel}
@@ -293,10 +320,18 @@ export function RemoteRelationMultiSelector({
 
             {isOpen ? (
               <div className="max-h-56 space-y-2 overflow-auto rounded-lg border border-border bg-surface p-3">
-                {options.length === 0 ? (
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder={searchPlaceholder}
+                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary"
+                />
+
+                {filteredOptions.length === 0 ? (
                   <p className="text-sm text-text-muted">{emptyOptionsText}</p>
                 ) : (
-                  options.map((option) => {
+                  filteredOptions.map((option) => {
                     const active = hasId(selectedIds, option.id);
 
                     return (
