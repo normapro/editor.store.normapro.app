@@ -23,6 +23,7 @@ import SolucionesAmbitosPage from "./pages/modules/SolucionesAmbitosPage";
 import SolucionesAmbitosSectoresPage from "./pages/modules/SolucionesAmbitosSectoresPage";
 import ClientesPage from "./pages/modules/ClientePage";
 import BeneficiosPage from "./pages/modules/BeneficiosPage";
+import ProblemasPage from "./pages/modules/ProblemasPage";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="/soluciones-ambitos-sectores" element={<SolucionesAmbitosSectoresPage />} />
           <Route path="/clientes" element={<ClientesPage />} />
           <Route path="/beneficios" element={<BeneficiosPage />} />
+          <Route path="/problemas" element={<ProblemasPage />}/>
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
