@@ -1,64 +1,29 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
 import type { Beneficio } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
+import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelationMultiSelector";
 import { getEditorToken } from "../../auth/session";
 
 const BENEFICIO_FIELDS: CampoEsquema<Beneficio>[] = [
   { name: "description", label: "Nombre", type: "textarea" },
-  { name: "solucionesAmbitosIds", label: "Soluciones-Ámbitos asociados", type: "multiselect", options: [] },
-  { name: "solucionesAmbitosSectoresIds", label: "Soluciones-Ámbitos-Sectores asociados", type: "multiselect", options: [] },
 ];
 
 export default function BeneficiosPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
-  const [BENEFICIO_FIELDS_OPTIONS, setFields] = useState(BENEFICIO_FIELDS);
+  const idBeneficioActual = useMemo(() => {
+    if (idEdicion === null) {
+      return null;
+    }
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const cargarOpcionesRelaciones = async () => {
-      try {
-        const [resSolucionesAmbitos, resSolucionesAmbitosSectores] = await Promise.all([
-          fetch(`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos`),
-          fetch(`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos-sectores`),
-        ]);
-
-        if (!resSolucionesAmbitos.ok || !resSolucionesAmbitosSectores.ok) throw new Error("Error cargando opciones");
-
-        const solucionesAmbitosData = await resSolucionesAmbitos.json();
-        const solucionesAmbitosSectoresData = await resSolucionesAmbitosSectores.json();
-
-        if (isMounted) {
-          const opcionesSolucionesAmbitos = solucionesAmbitosData.map((item: any) => ({
-            value: `${item.id_solucion}-${item.id_ambito}`,
-            label: item.description,
-          }));
-          const opcionesSolucionesAmbitosSectores = solucionesAmbitosSectoresData.map((item: any) => ({
-            value: `${item.id_solucion}-${item.id_ambito}-${item.id_sector}`,
-            label: item.description,
-          }));
-
-          setFields(BENEFICIO_FIELDS.map(f => {
-            if (f.name === "solucionesAmbitosIds") return { ...f, options: opcionesSolucionesAmbitos };
-            if (f.name === "solucionesAmbitosSectoresIds") return { ...f, options: opcionesSolucionesAmbitosSectores };
-            return f;
-          }));
-        }
-      } catch (err) {
-        console.error("Error cargando datos del editor:", err);
-      }
-    };
-
-    cargarOpcionesRelaciones();
-
-    return () => { isMounted = false; };
-  }, []);
+    const parsed = Number(idEdicion);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [idEdicion]);
 
 
 
@@ -130,10 +95,70 @@ export default function BeneficiosPage() {
             <Editor<Beneficio>
               endpoint={API_ENDPOINTS.BENEFICIOS}
               saveEndpoint={API_ENDPOINTS.BENEFICIOS_EDITOR}
-              fields={BENEFICIO_FIELDS_OPTIONS}
+              fields={BENEFICIO_FIELDS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <div className="space-y-4">
+                  <RemoteRelationMultiSelector
+                    title="Soluciones-Ámbitos asociadas"
+                    description="Selecciona las soluciones por ámbito que aplican a este beneficio."
+                    createModeMessage="Guarda el beneficio primero para poder relacionarlo con soluciones-ámbitos."
+                    entityId={idBeneficioActual}
+                    catalogEndpoint={`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos`}
+                    relationEndpointBase={`${API_ENDPOINTS.BENEFICIOS_EDITOR}/soluciones-ambitos`}
+                    token={getEditorToken()}
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    optionResolver={(item) => {
+                      const idSolucion = Number(item.id_solucion);
+                      const idAmbito = Number(item.id_ambito);
+                      if (!Number.isFinite(idSolucion) || !Number.isFinite(idAmbito)) {
+                        return null;
+                      }
+
+                      const compositeId = `${idSolucion}-${idAmbito}`;
+                      const nombre = String(item.description ?? "").trim();
+
+                      return {
+                        id: compositeId,
+                        label: nombre ? `${compositeId} - ${nombre}` : compositeId,
+                      };
+                    }}
+                    openLabel="Seleccionar soluciones-ámbitos"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Soluciones-Ámbitos-Sectores asociadas"
+                    description="Selecciona las soluciones por ámbito y sector que aplican a este beneficio."
+                    createModeMessage="Guarda el beneficio primero para poder relacionarlo con soluciones-ámbitos-sectores."
+                    entityId={idBeneficioActual}
+                    catalogEndpoint={`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos-sectores`}
+                    relationEndpointBase={`${API_ENDPOINTS.BENEFICIOS_EDITOR}/soluciones-ambitos-sectores`}
+                    token={getEditorToken()}
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    optionResolver={(item) => {
+                      const idSolucion = Number(item.id_solucion);
+                      const idAmbito = Number(item.id_ambito);
+                      const idSector = Number(item.id_sector);
+                      if (!Number.isFinite(idSolucion) || !Number.isFinite(idAmbito) || !Number.isFinite(idSector)) {
+                        return null;
+                      }
+
+                      const compositeId = `${idSolucion}-${idAmbito}-${idSector}`;
+                      const nombre = String(item.description ?? "").trim();
+
+                      return {
+                        id: compositeId,
+                        label: nombre ? `${compositeId} - ${nombre}` : compositeId,
+                      };
+                    }}
+                    openLabel="Seleccionar soluciones-ámbitos-sectores"
+                  />
+                </div>
+              )}
             />
           )}
         </div>

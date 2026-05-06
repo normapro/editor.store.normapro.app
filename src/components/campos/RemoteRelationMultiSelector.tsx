@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
+type RelationId = string | number;
+type RowRecord = Record<string, unknown>;
+
+interface OptionResolved {
+  id: RelationId;
+  label: string;
+}
+
 interface RemoteRelationMultiSelectorProps {
   title: string;
   description: string;
@@ -10,6 +18,7 @@ interface RemoteRelationMultiSelectorProps {
   token?: string | null;
   optionIdField?: string;
   optionLabelField?: string;
+  optionResolver?: (item: RowRecord) => OptionResolved | null;
   relationIdsField?: string;
   createBodyField?: string;
   openLabel?: string;
@@ -21,7 +30,7 @@ interface RemoteRelationMultiSelectorProps {
 }
 
 interface GenericOption {
-  id: number;
+  id: RelationId;
   label: string;
 }
 
@@ -35,6 +44,7 @@ export function RemoteRelationMultiSelector({
   token,
   optionIdField = "id",
   optionLabelField = "description",
+  optionResolver,
   relationIdsField = "id_relaciones",
   createBodyField = "id_relacion",
   openLabel = "Seleccionar",
@@ -46,20 +56,40 @@ export function RemoteRelationMultiSelector({
 }: RemoteRelationMultiSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<GenericOption[]>([]);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [savedIds, setSavedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<RelationId[]>([]);
+  const [savedIds, setSavedIds] = useState<RelationId[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(false);
   const [loadingRelations, setLoadingRelations] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const selectedLabelMap = useMemo(() => {
-    const map = new Map<number, string>();
+    const map = new Map<string, string>();
     options.forEach((option) => {
-      map.set(option.id, option.label);
+      map.set(String(option.id), option.label);
     });
     return map;
   }, [options]);
+
+  const hasId = (list: RelationId[], id: RelationId): boolean => {
+    const target = String(id);
+    return list.some((item) => String(item) === target);
+  };
+
+  const normalizeRelationId = (value: unknown): RelationId | null => {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+
+    return null;
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -81,11 +111,16 @@ export function RemoteRelationMultiSelector({
         const parsed = Array.isArray(data)
           ? data
               .map((item: unknown) => {
-                const row = (item ?? {}) as Record<string, unknown>;
-                const idValue = Number(row[optionIdField]);
+                const row = (item ?? {}) as RowRecord;
+
+                if (optionResolver) {
+                  return optionResolver(row);
+                }
+
+                const idValue = normalizeRelationId(row[optionIdField]);
                 const labelValue = String(row[optionLabelField] ?? "").trim();
 
-                if (!Number.isFinite(idValue) || !labelValue) {
+                if (idValue === null || !labelValue) {
                   return null;
                 }
 
@@ -114,7 +149,7 @@ export function RemoteRelationMultiSelector({
     return () => {
       cancelled = true;
     };
-  }, [catalogEndpoint, optionIdField, optionLabelField]);
+  }, [catalogEndpoint, optionIdField, optionLabelField, optionResolver]);
 
   useEffect(() => {
     if (entityId === null) {
@@ -146,8 +181,8 @@ export function RemoteRelationMultiSelector({
 
         const ids = Array.isArray(data?.[relationIdsField])
           ? data[relationIdsField]
-              .map((item: unknown) => Number(item))
-              .filter((id: number) => Number.isFinite(id))
+              .map((item: unknown) => normalizeRelationId(item))
+              .filter((id: RelationId | null): id is RelationId => id !== null)
           : [];
 
         setSelectedIds(ids);
@@ -171,10 +206,10 @@ export function RemoteRelationMultiSelector({
     };
   }, [entityId, relationEndpointBase, relationIdsField, token]);
 
-  const toggleOption = (id: number) => {
+  const toggleOption = (id: RelationId) => {
     setSelectedIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((item) => item !== id);
+      if (hasId(prev, id)) {
+        return prev.filter((item) => String(item) !== String(id));
       }
 
       return [...prev, id];
@@ -197,8 +232,8 @@ export function RemoteRelationMultiSelector({
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const toCreate = selectedIds.filter((id) => !savedIds.includes(id));
-    const toDelete = savedIds.filter((id) => !selectedIds.includes(id));
+    const toCreate = selectedIds.filter((id) => !hasId(savedIds, id));
+    const toDelete = savedIds.filter((id) => !hasId(selectedIds, id));
 
     try {
       for (const relationId of toCreate) {
@@ -214,7 +249,8 @@ export function RemoteRelationMultiSelector({
       }
 
       for (const relationId of toDelete) {
-        const res = await fetch(`${relationEndpointBase}/${entityId}/${relationId}`, {
+        const encodedRelationId = encodeURIComponent(String(relationId));
+        const res = await fetch(`${relationEndpointBase}/${entityId}/${encodedRelationId}`, {
           method: "DELETE",
           headers,
         });
@@ -261,7 +297,7 @@ export function RemoteRelationMultiSelector({
                   <p className="text-sm text-text-muted">{emptyOptionsText}</p>
                 ) : (
                   options.map((option) => {
-                    const active = selectedIds.includes(option.id);
+                    const active = hasId(selectedIds, option.id);
 
                     return (
                       <button
@@ -287,12 +323,12 @@ export function RemoteRelationMultiSelector({
               <div className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface-alt p-3">
                 {selectedIds.map((id) => (
                   <button
-                    key={id}
+                    key={String(id)}
                     type="button"
                     onClick={() => toggleOption(id)}
                     className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-primary hover:bg-surface-hover"
                   >
-                    {(selectedLabelMap.get(id) ?? `Elemento ${id}`) + " ×"}
+                    {(selectedLabelMap.get(String(id)) ?? `Elemento ${id}`) + " ×"}
                   </button>
                 ))}
               </div>
