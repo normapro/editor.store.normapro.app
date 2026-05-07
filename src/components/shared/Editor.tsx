@@ -101,8 +101,11 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       headers.Authorization = `Bearer ${token}`;
     }
 
-    // Limpiar el contenido del informe antes de enviarlo
-    const cleanedFormData = { ...formData } as any;
+    // Enviar solo los campos configurados para evitar sobrescribir con propiedades ocultas del GET.
+    const cleanedFormData = fields.reduce<Record<string, unknown>>((acc, campo) => {
+      acc[String(campo.name)] = getFieldValue(campo.name);
+      return acc;
+    }, {});
 
     if (cleanedFormData["prologo"]) {
       cleanedFormData["prologo"] = cleanContenidoInforme(cleanedFormData["prologo"]);

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getEditorToken } from "../../auth/session";
 
 type RelationId = string | number;
 type RowRecord = Record<string, unknown>;
@@ -110,6 +111,10 @@ export function RemoteRelationMultiSelector({
     return null;
   };
 
+  const getAuthToken = (): string | null => {
+    return getEditorToken() ?? token ?? null;
+  };
+
   useEffect(() => {
     let cancelled = false;
     setLoadingOptions(true);
@@ -181,8 +186,9 @@ export function RemoteRelationMultiSelector({
     setLoadingRelations(true);
 
     const headers: HeadersInit = {};
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    const authToken = getAuthToken();
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
 
     fetch(`${relationEndpointBase}/${entityId}`, { headers })
@@ -247,8 +253,9 @@ export function RemoteRelationMultiSelector({
       "Content-Type": "application/json",
     };
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    const authToken = getAuthToken();
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
 
     const toCreate = selectedIds.filter((id) => !hasId(savedIds, id));
@@ -263,7 +270,8 @@ export function RemoteRelationMultiSelector({
         });
 
         if (!res.ok) {
-          throw new Error("create_relation_failed");
+          const responseText = await res.text();
+          throw new Error(`create_relation_failed (${res.status}) ${responseText}`.trim());
         }
       }
 
@@ -275,13 +283,21 @@ export function RemoteRelationMultiSelector({
         });
 
         if (!res.ok && res.status !== 404) {
-          throw new Error("delete_relation_failed");
+          const responseText = await res.text();
+          throw new Error(`delete_relation_failed (${res.status}) ${responseText}`.trim());
         }
       }
 
       setSavedIds([...selectedIds]);
-    } catch {
-      setError("No se pudieron guardar las relaciones.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "error_desconocido";
+      console.error("Error guardando relaciones:", message);
+
+      if (message.includes("(401)") || message.includes("(403)")) {
+        setError("No se pudieron guardar las relaciones: sesion expirada o sin permisos.");
+      } else {
+        setError("No se pudieron guardar las relaciones.");
+      }
     } finally {
       setSaving(false);
     }
