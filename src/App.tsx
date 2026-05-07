@@ -24,6 +24,9 @@ import SolucionesAmbitosSectoresPage from "./pages/modules/SolucionesAmbitosSect
 import ClientesPage from "./pages/modules/ClientePage";
 import BeneficiosPage from "./pages/modules/BeneficiosPage";
 import ProblemasPage from "./pages/modules/ProblemasPage";
+import CasosDeUsoPage from "./pages/modules/CasosDeUsoPage";
+import CaracteristicaPage from "./pages/modules/CaracteristicaPage";
+import FaqPage from "./pages/modules/FaqPage";
 
 function App() {
   return (
@@ -51,7 +54,10 @@ function App() {
           <Route path="/soluciones-ambitos-sectores" element={<SolucionesAmbitosSectoresPage />} />
           <Route path="/clientes" element={<ClientesPage />} />
           <Route path="/beneficios" element={<BeneficiosPage />} />
-          <Route path="/problemas" element={<ProblemasPage />}/>
+          <Route path="/problemas" element={<ProblemasPage />} />
+          <Route path="/casos-de-uso" element={<CasosDeUsoPage />} />
+          <Route path="/caracteristicas" element={<CaracteristicaPage />} />
+          <Route path="/faq" element={<FaqPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
