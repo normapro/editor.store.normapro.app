@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
@@ -6,6 +6,7 @@ import type { Pack } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
 import { getEditorToken } from "../../auth/session";
+import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelationMultiSelector";
 
 const PACK_FIELDS: CampoEsquema<Pack>[] = [
   { name: "description", label: "Nombre", type: "text" },
@@ -42,6 +43,15 @@ export default function PacksPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+
+  const idPackActual = useMemo(() => {
+    if (idEdicion === null) {
+      return null;
+    }
+
+    const parsed = Number(idEdicion);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [idEdicion]);
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -114,6 +124,99 @@ export default function PacksPage() {
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <div className="space-y-4">
+                  <RemoteRelationMultiSelector
+                    title="Beneficios relacionados"
+                    description="Asocia los beneficios que aplican a este pack."
+                    createModeMessage="Guarda el pack primero para poder relacionarlo con beneficios."
+                    entityId={idPackActual}
+                    catalogEndpoint={API_ENDPOINTS.BENEFICIOS}
+                    relationEndpointBase={`${API_ENDPOINTS.PACKS_EDITOR}/relaciones/beneficios`}
+                    token={getEditorToken()}
+                    optionIdField="id_beneficio"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar beneficios"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Características relacionadas"
+                    description="Asocia las características que aplican a este pack."
+                    createModeMessage="Guarda el pack primero para poder relacionarlo con características."
+                    entityId={idPackActual}
+                    catalogEndpoint={API_ENDPOINTS.CARACTERISTICAS}
+                    relationEndpointBase={`${API_ENDPOINTS.PACKS_EDITOR}/relaciones/caracteristicas`}
+                    token={getEditorToken()}
+                    optionIdField="id_caracteristica"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar características"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Casos de uso relacionados"
+                    description="Asocia los casos de uso que aplican a este pack."
+                    createModeMessage="Guarda el pack primero para poder relacionarlo con casos de uso."
+                    entityId={idPackActual}
+                    catalogEndpoint={API_ENDPOINTS.CASOS_DE_USO}
+                    relationEndpointBase={`${API_ENDPOINTS.PACKS_EDITOR}/relaciones/casos-de-uso`}
+                    token={getEditorToken()}
+                    optionIdField="id_casodeuso"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar casos de uso"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="FAQ relacionadas"
+                    description="Asocia las FAQ que aplican a este pack."
+                    createModeMessage="Guarda el pack primero para poder relacionarlo con FAQ."
+                    entityId={idPackActual}
+                    catalogEndpoint={API_ENDPOINTS.FAQ}
+                    relationEndpointBase={`${API_ENDPOINTS.PACKS_EDITOR}/relaciones/faq`}
+                    token={getEditorToken()}
+                    optionIdField="id_faq"
+                    optionLabelField="question"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar FAQ"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Sectores relacionados"
+                    description="Asocia los sectores que aplican a este pack."
+                    createModeMessage="Guarda el pack primero para poder relacionarlo con sectores."
+                    entityId={idPackActual}
+                    catalogEndpoint={API_ENDPOINTS.SECTORES}
+                    relationEndpointBase={`${API_ENDPOINTS.PACKS_EDITOR}/relaciones/sectores`}
+                    token={getEditorToken()}
+                    optionIdField="id_sector"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar sectores"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Soluciones relacionadas"
+                    description="Asocia las soluciones simples que aplican a este pack."
+                    createModeMessage="Guarda el pack primero para poder relacionarlo con soluciones."
+                    entityId={idPackActual}
+                    catalogEndpoint={`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones`}
+                    relationEndpointBase={`${API_ENDPOINTS.PACKS_EDITOR}/relaciones/soluciones`}
+                    token={getEditorToken()}
+                    optionIdField="id_solucion"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar soluciones"
+                  />
+                </div>
+              )}
             />
           )}
         </div>
