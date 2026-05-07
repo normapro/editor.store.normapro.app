@@ -120,7 +120,7 @@ export default function ProblemasPage() {
                     createModeMessage="Guarda el problema primero para poder relacionarlo con soluciones-ámbitos."
                     entityId={idProblemaActual}
                     catalogEndpoint={`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos`}
-                    relationEndpointBase={`${API_ENDPOINTS.BENEFICIOS_EDITOR}/soluciones-ambitos`}
+                    relationEndpointBase={`${API_ENDPOINTS.PROBLEMAS_EDITOR}/soluciones-ambitos`}
                     token={getEditorToken()}
                     relationIdsField="ids"
                     createBodyField="relationId"
@@ -148,7 +148,7 @@ export default function ProblemasPage() {
                     createModeMessage="Guarda el problema primero para poder relacionarlo con soluciones-ámbitos-sectores."
                     entityId={idProblemaActual}
                     catalogEndpoint={`${API_ENDPOINTS.SOLUCIONES_EDITOR_READ}/soluciones-ambitos-sectores`}
-                    relationEndpointBase={`${API_ENDPOINTS.BENEFICIOS_EDITOR}/soluciones-ambitos-sectores`}
+                    relationEndpointBase={`${API_ENDPOINTS.PROBLEMAS_EDITOR}/soluciones-ambitos-sectores`}
                     token={getEditorToken()}
                     relationIdsField="ids"
                     createBodyField="relationId"
