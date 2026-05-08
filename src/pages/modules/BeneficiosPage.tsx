@@ -75,11 +75,11 @@ export default function BeneficiosPage() {
 
   return (
     <>
-      <Header 
-        title="Beneficios" 
+      <Header
+        title="Beneficios"
         subtitle={modo === "listado" ? "Gestion de beneficios" : "Editor de beneficio"}
       />
-      
+
       <main className="p-8">
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm">
           {modo === "listado" ? (
@@ -101,6 +101,21 @@ export default function BeneficiosPage() {
               onGuardado={onGuardado}
               extraBeforeActions={(
                 <div className="space-y-4">
+                  <RemoteRelationMultiSelector
+                    title="Packs relacionados"
+                    description="Selecciona los packs que quieras asociar a este beneficio."
+                    createModeMessage="Guarda el beneficio primero para poder relacionarlo con packs."
+                    entityId={idBeneficioActual}
+                    catalogEndpoint={`${API_ENDPOINTS.PACKS_EDITOR_READ}`}
+                    relationEndpointBase={`${API_ENDPOINTS.BENEFICIOS_EDITOR}/packs`}
+                    token={getEditorToken()}
+                    optionIdField="id_pack"
+                    optionLabelField="description"
+                    relationIdsField="id_packs"
+                    createBodyField="id_pack"
+                    openLabel="Seleccionar packs"
+                  />
+
                   <RemoteRelationMultiSelector
                     title="Soluciones-Ámbitos asociadas"
                     description="Selecciona las soluciones por ámbito que aplican a este beneficio."

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 // Props minimas del componente: solo necesita el endpoint a consultar.
 interface ListaRecursoProps<T extends object> {
@@ -56,6 +56,9 @@ export function ListaRecurso<T extends object>({
   // hasError: controla si se debe mostrar el mensaje rojo generico.
   const [items, setItems] = useState<T[]>([]);
   const [hasError, setHasError] = useState(false);
+  
+  // --- NUEVO: Estado para el término de búsqueda ---
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // Evita setState cuando el componente se desmonta antes de acabar el fetch.
@@ -88,16 +91,45 @@ export function ListaRecurso<T extends object>({
     };
   }, [endpoint, reloadKey]);
 
-  // Mensaje unico de error, sin detalles tecnicos.
+  const filteredItems = useMemo(() => {
+    const query = searchTerm.toLowerCase().trim();
+    if (!query) return items;
+
+    return items.filter((item, index) => {
+      const id = String(resolveItemId(item, index)).toLowerCase();
+      const title = String(item[titleField] ?? '').toLowerCase();
+      return id.includes(query) || title.includes(query);
+    });
+  }, [items, searchTerm, titleField]);
+
   if (hasError) return <div className="text-danger">Error al cargar la lista.</div>;
 
   return (
     <div className="w-full">
-      <div className="mb-4 flex justify-end mr-2 w-full">
+      <div className="mb-4 flex flex-col sm:flex-row justify-between items-center gap-4 px-2">
+        {/* Barra de busqueda */}
+        <div className="relative w-full sm:w-1/3">
+          <input
+            type="text"
+            placeholder="Buscar por ID o título..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-lg border border-border bg-surface px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+          />
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-2 text-text-muted hover:text-text-primary"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
         <button
           type="button"
           onClick={onAdd}
-          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-primary/10 w-[20%] h-10"
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-primary/10 w-full sm:w-auto h-10 min-w-[120px]"
         >
           Añadir +
         </button>
@@ -114,36 +146,42 @@ export function ListaRecurso<T extends object>({
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {items.map((item, index) => {
-              // Calcula clave/valor de la columna ID.
-              const id = resolveItemId(item, index);
-              
-              return (
-                <tr key={id} className="hover:bg-surface-hover">
-                  <td className="px-6 py-4 text-sm text-text-muted">{id}</td>
-                  <td className="px-6 py-4 text-sm text-text-primary">{String(item[titleField] ?? '')}</td>
-                  <td className="px-6 py-4 text-right text-sm">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => onEdit?.(id, item)}
-                        className="rounded-md border border-border px-3 py-1.5 text-text-secondary hover:bg-primary/10"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDelete?.(id, item)}
-                        disabled={!onDelete}
-                        className="rounded-md border border-border px-3 py-1.5 text-danger hover:bg-danger/10"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item, index) => {
+                const id = resolveItemId(item, index);
+                return (
+                  <tr key={id} className="hover:bg-surface-hover">
+                    <td className="px-6 py-4 text-sm text-text-muted">{id}</td>
+                    <td className="px-6 py-4 text-sm text-text-primary">{String(item[titleField] ?? '')}</td>
+                    <td className="px-6 py-4 text-right text-sm">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => onEdit?.(id, item)}
+                          className="rounded-md border border-border px-3 py-1.5 text-text-secondary hover:bg-primary/10"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onDelete?.(id, item)}
+                          disabled={!onDelete}
+                          className="rounded-md border border-border px-3 py-1.5 text-danger hover:bg-danger/10"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={3} className="px-6 py-10 text-center text-sm text-text-muted">
+                  No se encontraron resultados para "{searchTerm}"
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
