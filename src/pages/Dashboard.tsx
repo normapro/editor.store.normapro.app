@@ -30,10 +30,10 @@ const secondaryModules = [
   { label: "Sectores", icon: Package, color: "bg-lime-500", to: "/sectores" },
   { label: "SolucionesAmbitos", icon: Package, color: "bg-violet-500", to: "/soluciones-ambitos" },
   { label: "SolucionesAmbitosSectores", icon: Package, color: "bg-fuchsia-500", to: "/soluciones-ambitos-sectores" },
-  { label: "Beneficios", icon: Lightbulb, color: "bg-rose-500", to: "/beneficios" },
-  { label: "Problemas", icon: Lightbulb, color: "bg-rose-500", to: "/problemas"},
-  { label: "Casos de Uso", icon: Lightbulb, color: "bg-rose-500", to: "/casos-de-uso"},
-  { label: "Caracteristicas", icon: Lightbulb, color: "bg-rose-500", to: "/caracteristicas"},
+  { label: "Beneficios", icon: Lightbulb, color: "bg-emerald-500", to: "/beneficios" },
+  { label: "Problemas", icon: Lightbulb, color: "bg-yellow-500", to: "/problemas"},
+  { label: "Casos de Uso", icon: Lightbulb, color: "bg-lime-500", to: "/casos-de-uso"},
+  { label: "Caracteristicas", icon: Lightbulb, color: "bg-violet-500", to: "/caracteristicas"},
   { label: "Faq", icon: Lightbulb, color: "bg-rose-500", to: "/faq"}
 ];
 

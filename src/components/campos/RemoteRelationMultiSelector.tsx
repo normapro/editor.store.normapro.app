@@ -13,7 +13,7 @@ interface RemoteRelationMultiSelectorProps {
   title: string;
   description: string;
   createModeMessage: string;
-  entityId: number | null;
+  entityId: number | string | null;
   catalogEndpoint: string;
   relationEndpointBase: string;
   token?: string | null;

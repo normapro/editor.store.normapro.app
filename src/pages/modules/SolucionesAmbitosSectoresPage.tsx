@@ -6,6 +6,7 @@ import type { Solucion } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
 import { getEditorToken } from "../../auth/session";
+import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelationMultiSelector";
 
 const SOLUCIONAMBITOSECTOR_FIELDS: CampoEsquema<Solucion>[] = [
   { name: "id_solucion", label: "Solución", type: "select", options: [] },
@@ -42,6 +43,7 @@ export default function SolucionesPage() {
   const [idEdicion, setIdEdicion] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [SOLUCIONAMBITOSECTOR_FIELDS_OPTIONS, setFields] = useState(SOLUCIONAMBITOSECTOR_FIELDS);
+  const idSolucionAmbitoSectorActual = idEdicion;
 
   useEffect(() => {
     let isMounted = true;
@@ -168,6 +170,99 @@ export default function SolucionesPage() {
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <div className="space-y-4">
+                  <RemoteRelationMultiSelector
+                    title="Beneficios relacionados"
+                    description="Selecciona los beneficios asociados a esta solución por ámbito y sector."
+                    createModeMessage="Guarda la solución-ámbito-sector primero para poder relacionarla con beneficios."
+                    entityId={idSolucionAmbitoSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.BENEFICIOS}
+                    relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones-ambitos-sectores/relaciones/beneficios`}
+                    token={getEditorToken()}
+                    optionIdField="id_beneficio"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar beneficios"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Características relacionadas"
+                    description="Selecciona las características asociadas a esta solución por ámbito y sector."
+                    createModeMessage="Guarda la solución-ámbito-sector primero para poder relacionarla con características."
+                    entityId={idSolucionAmbitoSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.CARACTERISTICAS}
+                    relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones-ambitos-sectores/relaciones/caracteristicas`}
+                    token={getEditorToken()}
+                    optionIdField="id_caracteristica"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar características"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Casos de uso relacionados"
+                    description="Selecciona los casos de uso asociados a esta solución por ámbito y sector."
+                    createModeMessage="Guarda la solución-ámbito-sector primero para poder relacionarla con casos de uso."
+                    entityId={idSolucionAmbitoSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.CASOS_DE_USO}
+                    relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones-ambitos-sectores/relaciones/casos-de-uso`}
+                    token={getEditorToken()}
+                    optionIdField="id_casodeuso"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar casos de uso"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Clientes relacionados"
+                    description="Selecciona los clientes asociados a esta solución por ámbito y sector."
+                    createModeMessage="Guarda la solución-ámbito-sector primero para poder relacionarla con clientes."
+                    entityId={idSolucionAmbitoSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.CLIENTES}
+                    relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones-ambitos-sectores/relaciones/clientes`}
+                    token={getEditorToken()}
+                    optionIdField="id_cliente"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar clientes"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="FAQ relacionadas"
+                    description="Selecciona las FAQ asociadas a esta solución por ámbito y sector."
+                    createModeMessage="Guarda la solución-ámbito-sector primero para poder relacionarla con FAQ."
+                    entityId={idSolucionAmbitoSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.FAQ}
+                    relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones-ambitos-sectores/relaciones/faq`}
+                    token={getEditorToken()}
+                    optionIdField="id_faq"
+                    optionLabelField="question"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar FAQ"
+                  />
+
+                  <RemoteRelationMultiSelector
+                    title="Problemas relacionados"
+                    description="Selecciona los problemas asociados a esta solución por ámbito y sector."
+                    createModeMessage="Guarda la solución-ámbito-sector primero para poder relacionarla con problemas."
+                    entityId={idSolucionAmbitoSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.PROBLEMAS}
+                    relationEndpointBase={`${API_ENDPOINTS.SOLUCIONES_EDITOR}/soluciones-ambitos-sectores/relaciones/problemas`}
+                    token={getEditorToken()}
+                    optionIdField="id_problema"
+                    optionLabelField="description"
+                    relationIdsField="ids"
+                    createBodyField="relationId"
+                    openLabel="Seleccionar problemas"
+                  />
+                </div>
+              )}
             />
           )}
         </div>
