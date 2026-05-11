@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "../../components/layout/Header";
 import { ListaRecurso } from "../../components/shared/ListaRecurso";
 import API_ENDPOINTS from "../../config/api";
@@ -36,13 +36,14 @@ const PACK_FIELDS: CampoEsquema<Pack>[] = [
   { name: "consultoriaTitle", label: "Título consultoría", type: "text" },
   { name: "consultoriaDescription", label: "Descripción consultoría", type: "textarea" },
   { name: "fraseCierre", label: "Frase cierre", type: "textarea" },
-  { name: "id_ambito", label: "ID ámbito", type: "number" },
+  { name: "id_ambito", label: "ID ámbito", type: "select", options: [] },
 ];
 
 export default function PacksPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [PACK_FIELDS_OPTIONS, setFields] = useState(PACK_FIELDS);
 
   const idPackActual = useMemo(() => {
     if (idEdicion === null) {
@@ -52,6 +53,44 @@ export default function PacksPage() {
     const parsed = Number(idEdicion);
     return Number.isFinite(parsed) ? parsed : null;
   }, [idEdicion]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const cargarOpcionesEditor = async () => {
+      try {
+        const [resAmbitos] = await Promise.all([
+          fetch(`${API_ENDPOINTS.AMBITOS}`)
+        ]);
+
+        if (!resAmbitos.ok) throw new Error("Error cargando opciones");
+
+        const ambitosData = await resAmbitos.json();
+
+        if (isMounted) {
+          const opcionesAmbitos = ambitosData.map((a: any) => ({
+            label: a.description,
+            value: a.id_ambito
+          }));
+
+          setFields(PACK_FIELDS.map(f => {
+            if (f.name === "id_ambito") {
+              return { ...f, options: opcionesAmbitos };
+            }
+            return f;
+          }));
+        }
+      } catch (err) {
+        console.error("Error cargando datos del editor:", err);
+      }
+    };
+
+    cargarOpcionesEditor();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -120,7 +159,7 @@ export default function PacksPage() {
             <Editor<Pack>
               endpoint={API_ENDPOINTS.PACKS_EDITOR_READ}
               saveEndpoint={API_ENDPOINTS.PACKS_EDITOR}
-              fields={PACK_FIELDS}
+              fields={PACK_FIELDS_OPTIONS}
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
