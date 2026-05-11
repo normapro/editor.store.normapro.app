@@ -6,6 +6,7 @@ import type { Sector } from "../../types";
 import type { CampoEsquema } from "../../types/editor";
 import { Editor } from "../../components/shared/Editor";
 import { getEditorToken } from "../../auth/session";
+import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelationMultiSelector";
 
 const SECTOR_FIELDS: CampoEsquema<Sector>[] = [
   { name: "description", label: "Nombre", type: "text" },
@@ -21,6 +22,7 @@ export default function SectoresPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const idSectorActual = idEdicion;
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -94,6 +96,24 @@ export default function SectoresPage() {
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <div className="space-y-4">
+                  <RemoteRelationMultiSelector
+                    title="Packs relacionados"
+                    description="Selecciona los packs asociados a este sector."
+                    createModeMessage="Guarda el sector primero para poder relacionarlo con packs."
+                    entityId={idSectorActual}
+                    catalogEndpoint={API_ENDPOINTS.PACKS_EDITOR_READ}
+                    relationEndpointBase={`${API_ENDPOINTS.SECTORES_EDITOR}/packs`}
+                    token={getEditorToken()}
+                    optionIdField="id_pack"
+                    optionLabelField="description"
+                    relationIdsField="id_packs"
+                    createBodyField="id_pack"
+                    openLabel="Seleccionar packs"
+                  />
+                </div>
+              )}
             />
           )}
         </div>
