@@ -20,7 +20,7 @@ export interface ComponentLibraryItem {
 export interface CampoEsquema<T> {
   name: keyof T;
   label: string;
-  type: "text" | "textarea" | "number" | "date" | "select" | "multiselect" | "paragraphs" | "contenido_informe" | "indice_informe" | "autores_informe" | "componentes_json";
+  type: "text" | "textarea" | "number" | "date" | "time" | "select" | "multiselect" | "paragraphs" | "contenido_informe" | "indice_informe" | "autores_informe" | "componentes_json";
   options?: string[]; // Solo para selects y multiselects
   componentLibrary?: ComponentLibraryItem[];
 }

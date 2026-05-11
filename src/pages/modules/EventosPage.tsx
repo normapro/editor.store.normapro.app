@@ -11,6 +11,7 @@ const EVENTO_FIELDS: CampoEsquema<Evento>[] = [
   { name: "title", label: "Título", type: "text" },
   { name: "description", label: "Descripción", type: "text" },
   { name: "fecha", label: "Fecha", type: "date" },
+  { name: "hora", label: "Hora", type: "time" },
 ];
 
 export default function EventosPage() {

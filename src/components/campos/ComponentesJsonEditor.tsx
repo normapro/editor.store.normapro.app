@@ -627,7 +627,7 @@ export function ComponentesJsonEditor({ value, onChange, library }: ComponentesJ
             </div>
           ) : (
             <textarea
-              className="min-h-56 rounded-lg border border-border bg-surface px-3 py-2 font-mono text-sm text-text-primary"
+              className="min-h-[28rem] w-full resize-y rounded-lg border border-border bg-surface px-3 py-2 font-mono text-sm text-text-primary"
               value={jsonDraft}
               onChange={(e) => setJsonDraft(e.target.value)}
               onBlur={commitJsonDraft}

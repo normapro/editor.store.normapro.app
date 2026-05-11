@@ -22,6 +22,64 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
   const [formData, setFormData] = useState<Partial<T>>({});
   const [hasError, setHasError] = useState(false);
 
+  const extractDateFromValue = (value: unknown): string | null => {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      const isoLike = trimmed.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (isoLike) {
+        return isoLike[1];
+      }
+
+      const parsed = new Date(trimmed);
+      if (!Number.isNaN(parsed.getTime())) {
+        return parsed.toISOString().slice(0, 10);
+      }
+
+      return null;
+    }
+
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return value.toISOString().slice(0, 10);
+    }
+
+    return null;
+  };
+
+  const extractTimeFromValue = (value: unknown): string | null => {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      const directTime = trimmed.match(/(\d{2}:\d{2})(?::\d{2})?$/);
+      if (directTime) {
+        return directTime[1];
+      }
+
+      const parsed = new Date(trimmed);
+      if (!Number.isNaN(parsed.getTime())) {
+        const hh = String(parsed.getHours()).padStart(2, '0');
+        const mm = String(parsed.getMinutes()).padStart(2, '0');
+        return `${hh}:${mm}`;
+      }
+
+      return null;
+    }
+
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      const hh = String(value.getHours()).padStart(2, '0');
+      const mm = String(value.getMinutes()).padStart(2, '0');
+      return `${hh}:${mm}`;
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     if (idEdicion === null) {
       setFormData({});
@@ -37,7 +95,27 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
         return res.json();
       })
       .then((data) => {
-        setFormData(data as Partial<T>);
+        const normalizedData = { ...(data as Record<string, unknown>) };
+
+        for (const campo of fields) {
+          if (campo.type !== 'time') {
+            continue;
+          }
+
+          const key = String(campo.name);
+          if (normalizedData[key] !== undefined && normalizedData[key] !== null && String(normalizedData[key]).trim() !== '') {
+            continue;
+          }
+
+          if (key === 'hora') {
+            const fallbackTime = extractTimeFromValue(normalizedData.fecha);
+            if (fallbackTime) {
+              normalizedData[key] = fallbackTime;
+            }
+          }
+        }
+
+        setFormData(normalizedData as Partial<T>);
       })
       .catch(() => {
         setHasError(true);
@@ -107,6 +185,23 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
       return acc;
     }, {});
 
+    const hasFechaField = fields.some((campo) => String(campo.name) === 'fecha');
+    const hasHoraField = fields.some((campo) => String(campo.name) === 'hora');
+
+    if (hasFechaField && hasHoraField) {
+      const fechaRaw = cleanedFormData.fecha;
+      const horaRaw = cleanedFormData.hora;
+
+      const normalizedDate = extractDateFromValue(fechaRaw);
+      const normalizedTime = extractTimeFromValue(horaRaw) ?? extractTimeFromValue(fechaRaw);
+
+      if (normalizedDate) {
+        cleanedFormData.fecha = `${normalizedDate} ${normalizedTime ?? '00:00'}:00`;
+      }
+
+      delete cleanedFormData.hora;
+    }
+
     if (cleanedFormData["prologo"]) {
       cleanedFormData["prologo"] = cleanContenidoInforme(cleanedFormData["prologo"]);
     }
@@ -142,6 +237,11 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
         const valorActual = getFieldValue(campo.name);
         const safeString = (() => {
           if (valorActual === null || valorActual === undefined) {
+            if (campo.type === 'time') {
+              const fallbackTime = extractTimeFromValue((formData as Record<string, unknown>).fecha);
+              return fallbackTime ?? '';
+            }
+
             return '';
           }
 
@@ -166,6 +266,16 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
             }
 
             return '';
+          }
+
+          if (campo.type === 'time') {
+            const timePart = extractTimeFromValue(valorActual);
+            if (timePart) {
+              return timePart;
+            }
+
+            const fallbackTime = extractTimeFromValue((formData as Record<string, unknown>).fecha);
+            return fallbackTime ?? '';
           }
 
           if (typeof valorActual === 'string' || typeof valorActual === 'number') {
