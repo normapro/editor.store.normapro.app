@@ -1,11 +1,48 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../config/api";
+import { setEditorToken } from "../auth/session";
 
 export default function InicioSesionPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const fromPath = (location.state as { from?: string } | null)?.from || "/dashboard";
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate("/dashboard");
+    setHasError(false);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(API_ENDPOINTS.EDITOR_LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("login_failed");
+      }
+
+      const data = await response.json();
+      if (!data?.token) {
+        throw new Error("token_missing");
+      }
+
+      setEditorToken(String(data.token));
+      navigate(fromPath, { replace: true });
+    } catch {
+      setHasError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -26,6 +63,12 @@ export default function InicioSesionPage() {
             </p>
 
             <form className="space-y-4" onSubmit={handleSubmit}>
+              {hasError && (
+                <div className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  No se pudo iniciar sesion.
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-semibold mb-1.5" htmlFor="email">
                   Correo electrónico
@@ -35,6 +78,9 @@ export default function InicioSesionPage() {
                   name="email"
                   type="email"
                   placeholder="tu@empresa.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="w-full h-11 rounded-xl border border-[#010D3D]/20 px-3.5 text-sm outline-none focus:border-[#00B2E3] focus:ring-2 focus:ring-[#00B2E3]/20"
                 />
               </div>
@@ -48,15 +94,19 @@ export default function InicioSesionPage() {
                   name="password"
                   type="password"
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="w-full h-11 rounded-xl border border-[#010D3D]/20 px-3.5 text-sm outline-none focus:border-[#64D8CC] focus:ring-2 focus:ring-[#64D8CC]/25"
                 />
               </div>
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full h-11 rounded-xl font-semibold text-white bg-gradient-to-r from-[#00B2E3] to-[#64D8CC] shadow-[0_10px_24px_rgba(0,178,227,0.28)] hover:brightness-105 transition-all"
               >
-                Entrar
+                {isSubmitting ? "Entrando..." : "Entrar"}
               </button>
             </form>
 

@@ -1,35 +1,64 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
+import RequireEditorAuth from "./components/auth/RequireEditorAuth";
 import WelcomePage from "./pages/WelcomePage";
 import InicioSesionPage from "./pages/InicioSesionPage";
 import Dashboard from "./pages/Dashboard";
 import ActualidadPage from "./pages/modules/ActualidadPage";
 import AplicacionesPage from "./pages/modules/AplicacionesPage";
+import AplicacionContenidoPage from "./pages/modules/AplicacionContenidoPage";
 import ConsultoriasPage from "./pages/modules/ConsultoriasPage";
+import ConsultoriaContenidoPage from "./pages/modules/ConsultoriaContenidoPage";
 import EventosPage from "./pages/modules/EventosPage";
 import HistoriasPage from "./pages/modules/HistoriasPage";
+import HistoriaContenidoPage from "./pages/modules/HistoriaContenidoPage";
 import InformesPage from "./pages/modules/InformesPage";
 import PacksPage from "./pages/modules/PacksPage";
 import SolucionesPage from "./pages/modules/SolucionesPage";
 import TestimoniosPage from "./pages/modules/TestimoniosPage";
+import AmbitosPage from "./pages/modules/AmbitosPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import SectoresPage from "./pages/modules/SectoresPage";
+import SolucionesAmbitosPage from "./pages/modules/SolucionesAmbitosPage";
+import SolucionesAmbitosSectoresPage from "./pages/modules/SolucionesAmbitosSectoresPage";
+import ClientesPage from "./pages/modules/ClientePage";
+import BeneficiosPage from "./pages/modules/BeneficiosPage";
+import ProblemasPage from "./pages/modules/ProblemasPage";
+import CasosDeUsoPage from "./pages/modules/CasosDeUsoPage";
+import CaracteristicaPage from "./pages/modules/CaracteristicaPage";
+import FaqPage from "./pages/modules/FaqPage";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<WelcomePage />} />
       <Route path="/inicio-sesion" element={<InicioSesionPage />} />
-      <Route element={<Layout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/actualidad" element={<ActualidadPage />} />
-        <Route path="/aplicaciones" element={<AplicacionesPage />} />
-        <Route path="/consultorias" element={<ConsultoriasPage />} />
-        <Route path="/eventos" element={<EventosPage />} />
-        <Route path="/historias" element={<HistoriasPage />} />
-        <Route path="/informes" element={<InformesPage />} />
-        <Route path="/packs" element={<PacksPage />} />
-        <Route path="/soluciones" element={<SolucionesPage />} />
-        <Route path="/testimonios" element={<TestimoniosPage />} />
+      <Route element={<RequireEditorAuth />}>
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/actualidad" element={<ActualidadPage />} />
+          <Route path="/aplicaciones" element={<AplicacionesPage />} />
+          <Route path="/aplicaciones/:id/contenido" element={<AplicacionContenidoPage />} />
+          <Route path="/consultorias" element={<ConsultoriasPage />} />
+          <Route path="/consultorias/:id/contenido" element={<ConsultoriaContenidoPage />} />
+          <Route path="/eventos" element={<EventosPage />} />
+          <Route path="/historias" element={<HistoriasPage />} />
+          <Route path="/historias/:id/contenido" element={<HistoriaContenidoPage />} />
+          <Route path="/informes" element={<InformesPage />} />
+          <Route path="/packs" element={<PacksPage />} />
+          <Route path="/soluciones" element={<SolucionesPage />} />
+          <Route path="/testimonios" element={<TestimoniosPage />} />
+          <Route path="/ambitos" element={<AmbitosPage />} />
+          <Route path="/sectores" element={<SectoresPage />} />
+          <Route path="/soluciones-ambitos" element={<SolucionesAmbitosPage />} />
+          <Route path="/soluciones-ambitos-sectores" element={<SolucionesAmbitosSectoresPage />} />
+          <Route path="/clientes" element={<ClientesPage />} />
+          <Route path="/beneficios" element={<BeneficiosPage />} />
+          <Route path="/problemas" element={<ProblemasPage />} />
+          <Route path="/casos-de-uso" element={<CasosDeUsoPage />} />
+          <Route path="/caracteristicas" element={<CaracteristicaPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+        </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

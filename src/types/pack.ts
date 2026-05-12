@@ -16,8 +16,8 @@ export interface Pack extends ItemListPack {
   subtitle: string;
   problemaTitle: string;
   problemaPragma: string;
-  multimedia_uri: string;
-  multimedia_type_id: number;
+  multimediaUri: string;
+  multimediaTypeId: number;
   solucionTitle: string;
   solucionPragma: string;
   caracteristicasTitle: string;
@@ -33,4 +33,7 @@ export interface Pack extends ItemListPack {
   consultoriaTitle: string;
   consultoriaDescription: string;
   fraseCierre: string;
+  descriptionForHighLight?: string;
+  titleweb?: string;
+  id_ambito?: number;
 }

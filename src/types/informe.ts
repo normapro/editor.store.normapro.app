@@ -1,17 +1,22 @@
 export interface PrologoItem {
-  titulo: string;
-  texto: string;
+  title?: string;
+  content?: string;
+  titulo?: string;
+  texto?: string;
 }
 
 export interface IndiceItem {
-  titulo: string;
-  claims: { titulo: string; texto: string }[];
+  title?: string;
+  titulo?: string;
+  ul?: string[];
+  claims?: { titulo?: string; texto?: string; title?: string; claim?: string }[];
 }
 
 export interface ResponsableInforme {
-  nombre: string;
-  cargo: string;
-  imagen: string;
+  nombre?: string;
+  empresa?: string;
+  cargo?: string;
+  imagen?: string;
 }
 
 export interface Informe {
@@ -19,9 +24,11 @@ export interface Informe {
   slug: string;
   categoria: string;
   titulo: string;
-  textoDescarga: string;
-  img_portada: string;
-  img_informe: string;
+  textoDescarga: string | null;
+  imgPortada?: string;
+  imgInforme?: string;
+  img_portada?: string;
+  img_informe?: string;
   prologo: PrologoItem[];
   indice: IndiceItem[];
   responsables: ResponsableInforme[];

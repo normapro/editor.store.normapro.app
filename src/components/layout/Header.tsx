@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, UserRound, Moon, Sun } from "lucide-react";
+import { LogOut, UserRound, Moon, Sun } from "lucide-react";
+import { clearEditorToken } from "../../auth/session";
 
 interface HeaderProps {
   title: string;
@@ -17,7 +18,8 @@ export default function Header({ title, subtitle }: HeaderProps) {
 
   const handleLogout = () => {
     setIsUserMenuOpen(false);
-    navigate("/");
+    clearEditorToken();
+    navigate("/inicio-sesion");
   };
 
   useEffect(() => {
@@ -76,16 +78,6 @@ export default function Header({ title, subtitle }: HeaderProps) {
 
 
       <div className="flex items-center gap-3">
-        {/* Buscador */}
-        <div className="h-9 px-3 rounded-lg bg-surface-alt border border-border w-[260px] flex items-center gap-2 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/30 transition-colors">
-          <Search size={16} className="text-text-muted shrink-0" />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="h-full w-full bg-transparent text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none"
-          />
-        </div>
-
         {/* Modo oscuro */}
         <button
           type="button"
@@ -98,11 +90,6 @@ export default function Header({ title, subtitle }: HeaderProps) {
         >
           {isDarkMode ? <Moon size={14} /> : <Sun size={14} />}
           <span>{isDarkMode ? "Oscuro" : "Claro"}</span>
-        </button>
-
-        {/* Notificaciones */}
-        <button className="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-hover transition-colors cursor-pointer">
-          <Bell size={16} />
         </button>
 
         {/* Avatar y menú */}

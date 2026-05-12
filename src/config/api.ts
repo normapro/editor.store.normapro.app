@@ -1,9 +1,11 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3010";
+const API_BASE_URL = import.meta.env.DEV
+  ? "/api"
+  : import.meta.env.VITE_API_BASE_URL || "http://localhost:3010";
 
 const API_ENDPOINTS = {
   AMBITOS: `${API_BASE_URL}/v1/store/ambitos`,
   AMBITOS_SOLUCIONES: `${API_BASE_URL}/v1/store/ambitosWithSolCounter`,
+  SOLUCIONES_EDITOR_READ: `${API_BASE_URL}/v1/store/soluciones-editor`,
   LISTSOLUCIONES: `${API_BASE_URL}/v1/store/listsoluciones`,
   SECTORES: `${API_BASE_URL}/v1/store/sectores`,
   HIGLIGHTEDPACKS: `${API_BASE_URL}/v1/store/highlighted/packs`,
@@ -16,10 +18,36 @@ const API_ENDPOINTS = {
   INFORMES: `${API_BASE_URL}/v1/store/informes`,
   APLICACIONES: `${API_BASE_URL}/v1/store/aplicaciones`,
   CONSULTORIA: `${API_BASE_URL}/v1/store/consultoria`,
+  CONSULTORIA_EDITOR_READ: `${API_BASE_URL}/v1/store/consultoria/id`,
   PACKS: `${API_BASE_URL}/v1/store/packs`,
+  PACKS_EDITOR_READ: `${API_BASE_URL}/v1/store/packs-editor`,
   COOKIES: `${API_BASE_URL}/v1/store/cookies`,
   EVENTOS: `${API_BASE_URL}/v1/store/eventos`,
+  EVENTOS_EDITOR_READ: `${API_BASE_URL}/v1/store/eventos-editor`,
+  EVENTOS_EDITOR: `${API_BASE_URL}/v1/editor/store/eventos`,
   ACTUALIDAD: `${API_BASE_URL}/v1/store/actualidad`,
+  ACTUALIDAD_EDITOR: `${API_BASE_URL}/v1/editor/store/actualidad`,
+  INFORMES_EDITOR: `${API_BASE_URL}/v1/editor/store/informes`,
+  APLICACIONES_EDITOR: `${API_BASE_URL}/v1/editor/store/aplicaciones`,
+  HISTORIAS_EDITOR: `${API_BASE_URL}/v1/editor/store/historias`,
+  CONSULTORIA_EDITOR: `${API_BASE_URL}/v1/editor/store/consultoria`,
+  PACKS_EDITOR: `${API_BASE_URL}/v1/editor/store/packs`,
+  AMBITOS_EDITOR: `${API_BASE_URL}/v1/editor/store/ambitos`,
+  SECTORES_EDITOR: `${API_BASE_URL}/v1/editor/store/sectores`,
+  SOLUCIONES_EDITOR: `${API_BASE_URL}/v1/editor/store/soluciones`,
+  CLIENTES_EDITOR: `${API_BASE_URL}/v1/editor/store/clientes`,
+  TESTIMONIOS_EDITOR: `${API_BASE_URL}/v1/editor/store/testimonios`,
+  BENEFICIOS: `${API_BASE_URL}/v1/store/beneficios`,
+  BENEFICIOS_EDITOR: `${API_BASE_URL}/v1/editor/store/beneficios`,
+  PROBLEMAS: `${API_BASE_URL}/v1/store/problemas`,
+  PROBLEMAS_EDITOR: `${API_BASE_URL}/v1/editor/store/problemas`,
+  CASOS_DE_USO: `${API_BASE_URL}/v1/store/casos-de-uso`,
+  CASOS_DE_USO_EDITOR: `${API_BASE_URL}/v1/editor/store/casos-de-uso`,
+  CARACTERISTICAS: `${API_BASE_URL}/v1/store/caracteristicas`,
+  CARACTERISTICAS_EDITOR: `${API_BASE_URL}/v1/editor/store/caracteristicas`,
+  FAQ: `${API_BASE_URL}/v1/store/faq`,
+  FAQ_EDITOR: `${API_BASE_URL}/v1/editor/store/faq`,
+  EDITOR_LOGIN: `${API_BASE_URL}/v1/editor-auth/login`,
 };
 
 export default API_ENDPOINTS;
