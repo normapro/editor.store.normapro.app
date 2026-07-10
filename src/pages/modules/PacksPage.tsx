@@ -10,6 +10,7 @@ import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelat
 
 const PACK_FIELDS: CampoEsquema<Pack>[] = [
   { name: "description", label: "Nombre", type: "text" },
+  { name: "categoria", label: "Categoría", type: "select", options: ['Sistemas de Gestión ISO', 'Cumplimiento legal normativo', 'Prevención y seguridad operativa', 'Sectores específicos', 'Gestión de stakeholders'] },
   { name: "shortDescription", label: "Descripción corta", type: "text" },
   { name: "slug", label: "Slug", type: "text" },
   { name: "uriIcon", label: "Icono", type: "text" },
