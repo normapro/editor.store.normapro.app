@@ -112,6 +112,20 @@ export default function SectoresPage() {
                     createBodyField="id_pack"
                     openLabel="Seleccionar packs"
                   />
+                  <RemoteRelationMultiSelector
+                    title="Clientes relacionados"
+                    description="Selecciona los clientes relacionados con este sector."
+                    createModeMessage="Guarda el sector primero para poder relacionarlo con clientes."
+                    entityId={idSectorActual}
+                    catalogEndpoint={`${API_ENDPOINTS.CLIENTES}?maxItems=100`}
+                    relationEndpointBase={`${API_ENDPOINTS.SECTORES_EDITOR}/clientes`}
+                    token={getEditorToken()}
+                    optionIdField="id_cliente"
+                    optionLabelField="description"
+                    relationIdsField="id_clientes"
+                    createBodyField="id_cliente"
+                    openLabel="Seleccionar clientes"
+                  />
                 </div>
               )}
             />
