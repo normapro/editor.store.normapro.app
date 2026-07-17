@@ -1,5 +1,6 @@
 export interface ItemListPack {
   id_pack: number;
+  categoria?: string;
   description: string;
   shortDescription: string;
   uriIcon: string;

@@ -6,6 +6,7 @@ import API_ENDPOINTS from "../../config/api";
 import { getEditorToken } from "../../auth/session";
 import type { Cliente } from "../../types/cliente";
 import type { CampoEsquema } from "../../types/editor";
+import { RemoteRelationMultiSelector } from "../../components/campos/RemoteRelationMultiSelector";
 
 const CLIENTE_FIELDS: CampoEsquema<Cliente>[] = [
   { name: "description", label: "Nombre", type: "text" },
@@ -19,6 +20,7 @@ export default function ClientesPage() {
   const [modo, setModo] = useState<"listado" | "editor">("listado");
   const [idEdicion, setIdEdicion] = useState<number | string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const idClienteActual = idEdicion;
 
   const abrirCrear = () => {
     setIdEdicion(null);
@@ -92,6 +94,22 @@ export default function ClientesPage() {
               idEdicion={idEdicion}
               onCerrar={cerrarEditor}
               onGuardado={onGuardado}
+              extraBeforeActions={(
+                <RemoteRelationMultiSelector
+                  title="Sectores relacionados"
+                  description="Selecciona los sectores asociados a este cliente."
+                  createModeMessage="Guarda el cliente primero para poder relacionarlo con sectores."
+                  entityId={idClienteActual}
+                  catalogEndpoint={API_ENDPOINTS.SECTORES}
+                  relationEndpointBase={`${API_ENDPOINTS.CLIENTES_EDITOR}/sectores`}
+                  token={getEditorToken()}
+                  optionIdField="id_sector"
+                  optionLabelField="description"
+                  relationIdsField="id_sectores"
+                  createBodyField="id_sector"
+                  openLabel="Seleccionar sectores"
+                />
+              )}
             />
           )}
         </div>
