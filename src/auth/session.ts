@@ -45,6 +45,13 @@ export function getEditorToken(): string | null {
   return token;
 }
 
+// Cabeceras de autenticacion para peticiones al API (incluidas las lecturas *-editor).
+// Usa el token de sesion; si no hay, el token de respaldo recibido (p. ej. por props).
+export function authHeaders(fallbackToken?: string | null): Record<string, string> {
+  const token = getEditorToken() ?? fallbackToken ?? null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export function setEditorToken(token: string): void {
   localStorage.setItem(EDITOR_TOKEN_KEY, token);
 }

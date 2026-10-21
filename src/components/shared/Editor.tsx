@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { CampoEsquema } from '../../types/editor';
-import { getEditorToken } from '../../auth/session';
+import { authHeaders, getEditorToken } from '../../auth/session';
 import { ParagraphsEditor } from '../campos/ParagraphsEditor';
 import { Multiselect } from '../campos/Multiselect';
 import { ContenidoInforme } from '../campos/ContenidoInforme';
@@ -89,7 +89,7 @@ export function Editor<T extends object>({ endpoint, saveEndpoint, fields, idEdi
 
     setHasError(false);
 
-    fetch(`${endpoint}/${idEdicion}`)
+    fetch(`${endpoint}/${idEdicion}`, { headers: authHeaders() })
       .then((res) => {
         if (!res.ok) throw new Error('fetch_failed');
         return res.json();
