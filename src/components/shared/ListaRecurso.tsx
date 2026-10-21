@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { authHeaders } from '../../auth/session';
 
 // Props minimas del componente: solo necesita el endpoint a consultar.
 interface ListaRecursoProps<T extends object> {
@@ -67,7 +68,7 @@ export function ListaRecurso<T extends object>({
     setHasError(false);
 
     // Pide la lista al endpoint configurado.
-    fetch(endpoint)
+    fetch(endpoint, { headers: authHeaders() })
       .then((res) => {
         if (!res.ok) throw new Error('fetch_failed');
         return res.json();

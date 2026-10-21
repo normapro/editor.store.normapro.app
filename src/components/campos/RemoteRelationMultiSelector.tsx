@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { getEditorToken } from "../../auth/session";
+import { authHeaders, getEditorToken } from "../../auth/session";
 
 type RelationId = string | number;
 type RowRecord = Record<string, unknown>;
@@ -119,7 +119,7 @@ export function RemoteRelationMultiSelector({
     let cancelled = false;
     setLoadingOptions(true);
 
-    fetch(catalogEndpoint)
+    fetch(catalogEndpoint, { headers: authHeaders(token) })
       .then((res) => {
         if (!res.ok) {
           throw new Error("fetch_catalog_failed");
@@ -173,7 +173,7 @@ export function RemoteRelationMultiSelector({
     return () => {
       cancelled = true;
     };
-  }, [catalogEndpoint, optionIdField, optionLabelField, optionResolver]);
+  }, [catalogEndpoint, optionIdField, optionLabelField, optionResolver, token]);
 
   useEffect(() => {
     if (entityId === null) {
